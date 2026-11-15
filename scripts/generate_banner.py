@@ -172,14 +172,13 @@ def main():
     mask = Image.new('L', (win_w, win_h), 0)
     mdraw = ImageDraw.Draw(mask)
     draw_rounded_rect(mdraw, [0, 0, win_w, win_h], radius=20, fill=255)
+    window_img.putalpha(mask)
 
     # Border around the window
-    border_layer = Image.new('RGBA', (win_w, win_h), (0, 0, 0, 0))
-    bdraw = ImageDraw.Draw(border_layer)
-    draw_rounded_rect(bdraw, [0, 0, win_w - 1, win_h - 1], radius=20, outline=(255, 255, 255, 38), width=1)
+    wdraw = ImageDraw.Draw(window_img)
+    draw_rounded_rect(wdraw, [0, 0, win_w - 1, win_h - 1], radius=20, outline=(255, 255, 255, 45), width=1)
 
-    canvas.paste(window_img, (win_x, win_y), mask)
-    canvas.paste(border_layer, (win_x, win_y), mask)
+    canvas.alpha_composite(window_img, (win_x, win_y))
 
     # 6. Floating Command Palette Showcase Card (Bottom Right)
     cmd_crop_path = 'assets/cmd_palette_crop.png'
@@ -216,14 +215,13 @@ def main():
         cmask = Image.new('L', (card_w, card_h), 0)
         cmdraw = ImageDraw.Draw(cmask)
         draw_rounded_rect(cmdraw, [0, 0, card_w, card_h], radius=16, fill=255)
+        card_img.putalpha(cmask)
 
-        cborder = Image.new('RGBA', (card_w, card_h), (0, 0, 0, 0))
-        cbdraw = ImageDraw.Draw(cborder)
-        draw_rounded_rect(cbdraw, [0, 0, card_w - 1, card_h - 1], radius=16,
-                          outline=(129, 140, 248, 120), width=1)
+        cdraw = ImageDraw.Draw(card_img)
+        draw_rounded_rect(cdraw, [0, 0, card_w - 1, card_h - 1], radius=16,
+                          outline=(129, 140, 248, 140), width=1)
 
-        canvas.paste(card_img, (card_x, card_y), cmask)
-        canvas.paste(cborder, (card_x, card_y), cmask)
+        canvas.alpha_composite(card_img, (card_x, card_y))
 
     # Save outputs
     out_png = 'assets/banner.png'
