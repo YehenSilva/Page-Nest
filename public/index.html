@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com https://apis.google.com blob:; worker-src 'self' blob: https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' data: https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' blob: data: https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.gstatic.com https://cdnjs.cloudflare.com; frame-src https: blob: data:; object-src blob: data:; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#191919">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <script>if(top!==self){try{top.location=self.location}catch(e){document.documentElement.innerHTML=""}}</script>
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1282,6 +1286,11 @@ html:not([data-theme=dark]) aside{background:color-mix(in srgb,#8d90cf 14%,var(-
 .vw{font-size:13px;padding:2px 0;color:var(--tx2)}.vw b{color:var(--tx)}.vpv{border:1px solid var(--bd);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:13px;max-height:260px;overflow:auto}
 .sec{padding:18px;display:flex;flex-direction:column;gap:10px;max-width:420px}
 @media(max-width:700px){.vm{flex-direction:column}.vl{width:auto;max-height:200px}}
+/* icon-only mentions */
+.mn::before,.ed a[href^="#/"]::before{content:'';display:inline-block;width:1em;height:1em;vertical-align:-.15em;margin-right:3px;background:currentColor;-webkit-mask:var(--mi) center/contain no-repeat;mask:var(--mi) center/contain no-repeat}
+.mn{--mi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round'%3E%3Crect x='2.5' y='3.5' width='11' height='10' rx='1.5'/%3E%3Cpath d='M2.5 6.5h11M5.5 2v3M10.5 2v3'/%3E%3C/svg%3E")}
+.ed a[href^="#/"]{--mi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 2h5l3.5 3.5V13a1 1 0 0 1-1 1h-7.5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z'/%3E%3Cpath d='M9 2v3.5h3.5'/%3E%3C/svg%3E")}
+.egrid button{padding:6px}
 </style>
 </head>
 <body>
@@ -1687,20 +1696,13 @@ function popup(x, y, items) {
 }
 
 /* Categorized Emoji Sets (No nulls, no empty items) */
-const EMOJI_SETS = [
-  '📄', '📝', '📘', '📚', '💡', '🚀', '🎯', '🔥', '⭐', '✨', '📌', '📎',
-  '🎨', '🎵', '📷', '💻', '🔧', '🧪', '📊', '📈', '💼', '🏠', '🌱', '☕',
-  '🏆', '🎓', '🧠', '🌍', '🔒', '📅', '💰', '🎬', '⚡', '💎', '🌈', '🛠️',
-  '📦', '🏷️', '💬', '✅', '⚠️', '🛑', '🧭', '🔮', '🍰', '🔑', '🔔', '📱',
-  '🖥️', '📡', '✈️', '☀️', '🌙', '🪐', '🪄', '🐱', '🐶', '🦊', '🐻', '🐼',
-  '🍎', '🍕', '🍔', '🍟', '🍩', '🍪', '🥤', '⚽', '🏀', '🎮', '🧩', '🎸'
-];
+const EMOJI_SETS = ['doc','folder','star','image','video','music','sheet','archive','link','clip','list','check','quote','info','alert','lock','keys','focus','printer','type','search','sun','moon','bolt','book','home','heart','flag','tag','bell','mail','globe','chart','user','calendar','shield','code','settings','download','install'];
 
 function emojiPop(ev, cb) {
   closePop();
   pop = h('div', { class: 'pop' });
   const g = h('div', { class: 'egrid' });
-  EMOJI_SETS.forEach(e => g.append(h('button', { onclick: () => { closePop(); cb(e); } }, e)));
+  EMOJI_SETS.forEach(e => g.append(h('button', { title: e, onclick: () => { closePop(); cb(e); } }, ico(e, 18))));
   pop.append(
     h('div', { class: 'pop-cat' }, 'Icons'),
     g,
@@ -1856,7 +1858,7 @@ function startDemoWorkspace() {
     {
       id: 'roadmap-2026',
       title: 'Product Vision & Roadmap 2026',
-      icon: '🚀',
+      icon: 'bolt',
       cover: 'linear-gradient(135deg, #18181b 0%, #27272a 50%, #09090b 100%)',
       created: 1000,
       ownerId: 'demo_user',
@@ -1865,16 +1867,16 @@ function startDemoWorkspace() {
       public: false,
       blocks: [
         { id: 'b1', type: 'h1', html: 'PageNest: The Modern Knowledge Workspace' },
-        { id: 'b2', type: 'callout', icon: '💡', html: '<b>Zero Cloud Cost:</b> PageNest runs completely on the Firebase Spark tier ($0/mo) with real-time Firestore sync and zero backend maintenance.' },
+        { id: 'b2', type: 'callout', icon: 'info', html: '<b>Zero Cloud Cost:</b> PageNest runs completely on the Firebase Spark tier ($0/mo) with real-time Firestore sync and zero backend maintenance.' },
         { id: 'b3', type: 'p', html: 'Welcome to your unified workspace. PageNest combines the elegance of Notion with the speed and keyboard fluidity of Linear. Capture thoughts, structure deep hierarchy, and collaborate seamlessly.' },
         { id: 'b4', type: 'h2', html: 'Core Deliverables & Sprint Status' },
         { id: 'b5', type: 'table', header: true, rows: [
           { c: ['Deliverable', 'Owner', 'Priority', 'Status', 'Target'] },
-          { c: ['Notion-grade Block Editor', 'Alex Chen', 'P0', '✅ Shipped', 'Q1 2026'] },
-          { c: ['Real-time Presence & Sync', 'Dev Team', 'P0', '🟢 Active', 'Q1 2026'] },
-          { c: ['Interactive Nested Toggles', 'Sarah Wu', 'P1', '✅ Complete', 'Q2 2026'] },
-          { c: ['Command Palette (Ctrl+K)', 'Core Team', 'P1', '✅ Shipped', 'Q2 2026'] },
-          { c: ['Zero-cost Firestore DB', 'Infra Team', 'P0', '✅ Verified', 'Q1 2026'] }
+          { c: ['Notion-grade Block Editor', 'Alex Chen', 'P0', 'Shipped', 'Q1 2026'] },
+          { c: ['Real-time Presence & Sync', 'Dev Team', 'P0', 'Active', 'Q1 2026'] },
+          { c: ['Interactive Nested Toggles', 'Sarah Wu', 'P1', 'Complete', 'Q2 2026'] },
+          { c: ['Command Palette (Ctrl+K)', 'Core Team', 'P1', 'Shipped', 'Q2 2026'] },
+          { c: ['Zero-cost Firestore DB', 'Infra Team', 'P0', 'Verified', 'Q1 2026'] }
         ]},
         { id: 'b6', type: 'h2', html: 'Sprint Checklist' },
         { id: 'b7', type: 'todo', checked: true, html: 'Implement monochrome SVG branding and vector assets' },
@@ -1889,33 +1891,33 @@ function startDemoWorkspace() {
     {
       id: 'design-system',
       title: 'Design System & Typography',
-      icon: '🎨',
+      icon: 'image',
       cover: 'linear-gradient(135deg, #09090b 0%, #1e1b4b 100%)',
       created: 2000,
       parentId: 'roadmap-2026',
       ownerId: 'demo_user',
       blocks: [
         { id: 'bd1', type: 'h1', html: 'Design Tokens & UI Philosophy' },
-        { id: 'bd2', type: 'callout', icon: '🎨', html: 'Crafted with authentic charcoal neutrals: <code>#37352f</code> text, <code>#e9e9e7</code> subtle borders, and smooth dark mode styling.' }
+        { id: 'bd2', type: 'callout', icon: 'image', html: 'Crafted with authentic charcoal neutrals: <code>#37352f</code> text, <code>#e9e9e7</code> subtle borders, and smooth dark mode styling.' }
       ]
     },
     {
       id: 'arch-specs',
       title: 'Architecture & Security Rules',
-      icon: '⚡',
+      icon: 'bolt',
       cover: 'linear-gradient(135deg, #111827 0%, #1f2937 100%)',
       created: 3000,
       parentId: 'roadmap-2026',
       ownerId: 'demo_user',
       blocks: [
         { id: 'ba1', type: 'h1', html: 'Zero-Cost Cloud Architecture' },
-        { id: 'ba2', type: 'callout', icon: '⚡', html: 'Full CRUD with optimistic UI, Firestore snapshots, and client-side Markdown/HTML compilation.' }
+        { id: 'ba2', type: 'callout', icon: 'bolt', html: 'Full CRUD with optimistic UI, Firestore snapshots, and client-side Markdown/HTML compilation.' }
       ]
     },
     {
       id: 'team-sync',
       title: 'Team Sync & Retrospective',
-      icon: '📝',
+      icon: 'doc',
       cover: '',
       created: 4000,
       ownerId: 'demo_user',
@@ -1926,7 +1928,7 @@ function startDemoWorkspace() {
     {
       id: 'knowledge-base',
       title: 'Engineering Knowledge Base',
-      icon: '📚',
+      icon: 'book',
       cover: '',
       created: 5000,
       ownerId: 'demo_user',
@@ -2179,7 +2181,7 @@ async function createWelcome() {
   const t = (type, html, x = {}) => ({ id: uid8(), type, html, ...x });
   const id = await newPage(null, 'Getting Started', [
     t('p', 'Welcome to PageNest. This is your personal workspace for docs, notes, and shared knowledge.'),
-    t('callout', 'Click anywhere to begin typing. Press <code>/</code> for block commands, or use markdown shortcuts like <code>#</code> for headings.', { icon: '💡' }),
+    t('callout', 'Click anywhere to begin typing. Press <code>/</code> for block commands, or use markdown shortcuts like <code>#</code> for headings.', { icon: 'info' }),
     t('h2', 'Core Features'),
     t('todo', 'Nest pages inside pages in the left sidebar'),
     t('todo', 'Attach PDFs, Word, and Excel files with live previews'),
@@ -3117,7 +3119,7 @@ function bodyFor(b, n, edit) {
       const wrap = h('div', {});
       wrap.append(
         h('div', { class: 'tgh' },
-          h('button', { class: 'car', style: 'margin-top:4px', onclick: () => { b.open = !b.open; if (edit) touch(); renderBlocks(); } }, b.open ? '▼' : '▶'),
+          h('button', { class: 'car', style: 'margin-top:4px', onclick: () => { b.open = !b.open; if (edit) touch(); renderBlocks(); } }, b.open ? '▾' : '▸'),
           editable(b, 'html', 'Toggle')
         )
       );
@@ -3127,7 +3129,7 @@ function bodyFor(b, n, edit) {
     case 'callout': {
       const ic = getIcon(b.icon, 'info');
       return h('div', { class: 'callout' },
-        h('button', { class: 'cicon', onclick: edit ? ev => emojiPop(ev, v => { b.icon = v || 'info'; touch(); renderBlocks(); }) : null }, ico(ic === '💡' ? 'info' : ic)),
+        h('button', { class: 'cicon', onclick: edit ? ev => emojiPop(ev, v => { b.icon = v || 'info'; touch(); renderBlocks(); }) : null }, ico(ic === '' ? 'info' : ic)),
         editable(b, 'html', 'Type something…')
       );
     }
@@ -3313,7 +3315,7 @@ function openLightbox(url, name) {
 function mediaEl(b, edit) {
   if (uploads.has(b.id)) {
     return h('div', { class: 'ph' },
-      '⏳ Uploading ' + (b.name || '') + '…',
+      'Uploading ' + (b.name || '') + '…',
       h('div', { class: 'bar' }, h('i', { style: `width:${uploads.get(b.id)}%` }))
     );
   }
@@ -3569,20 +3571,20 @@ function blockMenu(ev, b) {
 
 /* ---------- SLASH COMMANDS (/) (NOTION STYLE) ---------- */
 const CMDS = [
-  { n: 'Text', t: 'p', i: 'T', k: 'paragraph plain body', desc: 'Just start writing with plain text.' },
-  { n: 'Heading 1', t: 'h1', i: 'H1', k: 'title headline big', desc: 'Big section heading.' },
-  { n: 'Heading 2', t: 'h2', i: 'H2', k: 'subheading medium', desc: 'Medium section heading.' },
-  { n: 'Heading 3', t: 'h3', i: 'H3', k: 'subheading small', desc: 'Small section heading.' },
+  { n: 'Text', t: 'p', i: 'type', k: 'paragraph plain body', desc: 'Just start writing with plain text.' },
+  { n: 'Heading 1', t: 'h1', i: 'type', k: 'title headline big', desc: 'Big section heading.' },
+  { n: 'Heading 2', t: 'h2', i: 'type', k: 'subheading medium', desc: 'Medium section heading.' },
+  { n: 'Heading 3', t: 'h3', i: 'type', k: 'subheading small', desc: 'Small section heading.' },
   { n: 'To-do list', t: 'todo', i: 'check', k: 'checkbox task done', desc: 'Track tasks with a to-do list.' },
   { n: 'Bulleted list', t: 'bullet', i: 'list', k: 'ul list unordered', desc: 'Create a simple bulleted list.' },
-  { n: 'Numbered list', t: 'num', i: '1.', k: 'ol list ordered', desc: 'Create a list with numbering.' },
-  { n: 'Toggle list', t: 'toggle', i: '▸', k: 'collapse accordion fold', desc: 'Toggles hide and show content.' },
-  { n: 'Code', t: 'code', i: '</>', k: 'snippet programming syntax', desc: 'Capture a code snippet.' },
+  { n: 'Numbered list', t: 'num', i: 'list', k: 'ol list ordered', desc: 'Create a list with numbering.' },
+  { n: 'Toggle list', t: 'toggle', i: 'chevd', k: 'collapse accordion fold', desc: 'Toggles hide and show content.' },
+  { n: 'Code', t: 'code', i: 'code', k: 'snippet programming syntax', desc: 'Capture a code snippet.' },
   { n: 'Quote', t: 'quote', i: 'quote', k: 'blockquote cite', desc: 'Capture a quote.' },
   { n: 'Table of contents', t: 'toc', i: 'list', k: 'outline headings navigation index', desc: 'Link to every heading on this page.' },
   { n: 'Callout', t: 'callout', i: 'info', k: 'note info alert tip', desc: 'Make writing stand out.' },
-  { n: 'Divider', t: 'divider', i: '—', k: 'line hr separator', desc: 'Visually divide blocks.' },
-  { n: 'Table', t: 'table', i: '▦', k: 'grid rows columns csv sheet', desc: 'Add rows and columns or import CSV.' },
+  { n: 'Divider', t: 'divider', i: 'minus', k: 'line hr separator', desc: 'Visually divide blocks.' },
+  { n: 'Table', t: 'table', i: 'sheet', k: 'grid rows columns csv sheet', desc: 'Add rows and columns or import CSV.' },
   { n: 'Image', t: 'image', i: 'image', k: 'picture photo png jpg webp', desc: 'Upload or link an image.' },
   { n: 'File', t: 'file', i: 'clip', k: 'pdf word excel document', desc: 'Upload PDF, Word, Excel, or media.' },
   { n: 'Embed link', t: 'embed', i: 'link', k: 'youtube vimeo video bookmark', desc: 'Embed YouTube or web links.' },
@@ -4071,10 +4073,10 @@ const INIT = {
   bookmark: () => ({ url: '' })
 };
 CMDS.push(
-  { n: 'Database', t: 'database', i: '▦', k: 'table board gallery list kanban notion', desc: 'Table, board, gallery & list views.' },
-  { n: '2 columns', t: 'columns', i: '▥', k: 'column layout side', desc: 'Side-by-side text columns.' },
-  { n: '3 columns', t: 'columns3', i: '▥', k: 'column layout three', desc: 'Three text columns.' },
-  { n: 'Equation', t: 'equation', i: '∑', k: 'math latex katex formula', desc: 'Display a LaTeX equation.' },
+  { n: 'Database', t: 'database', i: 'sheet', k: 'table board gallery list kanban notion', desc: 'Table, board, gallery & list views.' },
+  { n: '2 columns', t: 'columns', i: 'width', k: 'column layout side', desc: 'Side-by-side text columns.' },
+  { n: '3 columns', t: 'columns3', i: 'width', k: 'column layout three', desc: 'Three text columns.' },
+  { n: 'Equation', t: 'equation', i: 'type', k: 'math latex katex formula', desc: 'Display a LaTeX equation.' },
   { n: 'Bookmark', t: 'bookmark', i: 'link', k: 'link url card web', desc: 'Save a link as a card.' });
 const _ac = applyCmd;
 applyCmd = (b, t) => {
@@ -4229,8 +4231,8 @@ shortcuts = (b, e) => {
   const m = e.textContent.match(/(?:^|\s)@([^\s@]*)$/);
   if (!m || slash) return closeMn();
   const q = m[1].toLowerCase(), date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const items = [{ l: '📅 Today · ' + date, html: '<span class="mn">📅 ' + date + '</span>' },
-    ...[...pages.values()].filter(p => !p.trashed && p.id !== cur.id && (p.title || 'Untitled').toLowerCase().includes(q)).slice(0, 6).map(p => ({ l: '📄 ' + (p.title || 'Untitled'), html: '<a href="#/' + p.id + '">📄 ' + esc(p.title || 'Untitled') + '</a>' }))];
+  const items = [{ i: 'calendar', l: 'Today · ' + date, html: '<span class="mn">' + date + '</span>' },
+    ...[...pages.values()].filter(p => !p.trashed && p.id !== cur.id && (p.title || 'Untitled').toLowerCase().includes(q)).slice(0, 6).map(p => ({ i: 'doc', l: (p.title || 'Untitled'), html: '<a href="#/' + p.id + '">' + esc(p.title || 'Untitled') + '</a>' }))];
   closeMn();
   mn = h('div', { class: 'pop' }, ...items.map(it => h('button', { class: 'pi', onmousedown: ev => {
     ev.preventDefault();
@@ -4238,7 +4240,7 @@ shortcuts = (b, e) => {
     if (n && n.nodeType === 3) { n.data = n.data.replace(/@[^\s@]*$/, ''); const r = document.createRange(); r.setStart(n, n.length); r.collapse(true); s.removeAllRanges(); s.addRange(r); }
     document.execCommand('insertHTML', false, it.html + '&nbsp;');
     e.dispatchEvent(new Event('input', { bubbles: true })); closeMn();
-  } }, it.l)));
+  } }, ico(it.i), ' ' + it.l)));
   document.body.append(mn);
   const r = e.getBoundingClientRect(); mn.style.left = r.left + 'px'; mn.style.top = r.bottom + 4 + 'px';
 };
@@ -4250,23 +4252,23 @@ renderPage = () => {
   _rp(); reset();
   const d = $('#doc'); if (!d || !cur) return;
   const L = [...pages.values()].filter(p => !p.trashed && p.id !== cur.id && JSON.stringify(p.blocks || []).includes('#/' + cur.id));
-  if (L.length) d.append(h('div', { class: 'bl' }, h('div', { class: 'muted sm' }, 'Linked mentions'), ...L.map(p => h('a', { class: 'plink', href: '#/' + p.id }, getIcon(p.icon, '📄'), ' ', p.title || 'Untitled'))));
+  if (L.length) d.append(h('div', { class: 'bl' }, h('div', { class: 'muted sm' }, 'Linked mentions'), ...L.map(p => h('a', { class: 'plink', href: '#/' + p.id }, ico(getIcon(p.icon, 'doc')), ' ', p.title || 'Untitled'))));
 };
 
 /* ---- Templates (Alt+T or Ctrl+K) ---- */
 const t = (type, html, x = {}) => ({ id: uid8(), type, html, ...x });
 const dbb = (props, rows, view) => ({ id: uid8(), type: 'database', html: '', db: { view, group: (props.find(p => p.type === 'select') || {}).id, q: '', props, rows: rows.map(v => ({ id: uid8(), v })) } });
 const TPL = [
-  ['📝', 'Meeting notes', () => [t('p', '<b>Date:</b> @'), t('p', '<b>Attendees:</b> '), t('h2', 'Agenda'), t('num', ''), t('h2', 'Notes'), t('p', ''), t('h2', 'Action items'), t('todo', ''), t('todo', '')]],
-  ['🚀', 'Project tracker', () => [t('callout', 'Switch to Board view and drag cards between columns.', { icon: 'info' }), dbb([{ id: 't', name: 'Task', type: 'title' }, { id: 's', name: 'Status', type: 'select', opts: ['Backlog', 'In progress', 'Review', 'Done'] }, { id: 'o', name: 'Owner', type: 'text' }, { id: 'd', name: 'Due', type: 'date' }], [{ t: 'Plan scope', s: 'Backlog' }, { t: 'Build prototype', s: 'In progress' }, { t: 'Launch', s: 'Backlog' }], 'board')]],
-  ['📅', 'Weekly planner', () => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Weekend'].flatMap(x => [t('h3', x), t('todo', '')])],
-  ['📚', 'Reading list', () => [dbb([{ id: 't', name: 'Title', type: 'title' }, { id: 'a', name: 'Author', type: 'text' }, { id: 's', name: 'Status', type: 'select', opts: ['Want to read', 'Reading', 'Finished'] }, { id: 'r', name: 'Rating', type: 'number' }], [{ t: 'Example book', a: 'Author', s: 'Want to read' }], 'gallery')]],
-  ['✅', 'Habit tracker', () => [t('h2', 'Today'), ...['Exercise', 'Read', 'Meditate', 'Write'].map(x => t('todo', x)), t('divider', ''), t('h2', 'Notes'), t('p', '')]]
+  ['doc', 'Meeting notes', () => [t('p', '<b>Date:</b> @'), t('p', '<b>Attendees:</b> '), t('h2', 'Agenda'), t('num', ''), t('h2', 'Notes'), t('p', ''), t('h2', 'Action items'), t('todo', ''), t('todo', '')]],
+  ['bolt', 'Project tracker', () => [t('callout', 'Switch to Board view and drag cards between columns.', { icon: 'info' }), dbb([{ id: 't', name: 'Task', type: 'title' }, { id: 's', name: 'Status', type: 'select', opts: ['Backlog', 'In progress', 'Review', 'Done'] }, { id: 'o', name: 'Owner', type: 'text' }, { id: 'd', name: 'Due', type: 'date' }], [{ t: 'Plan scope', s: 'Backlog' }, { t: 'Build prototype', s: 'In progress' }, { t: 'Launch', s: 'Backlog' }], 'board')]],
+  ['calendar', 'Weekly planner', () => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Weekend'].flatMap(x => [t('h3', x), t('todo', '')])],
+  ['book', 'Reading list', () => [dbb([{ id: 't', name: 'Title', type: 'title' }, { id: 'a', name: 'Author', type: 'text' }, { id: 's', name: 'Status', type: 'select', opts: ['Want to read', 'Reading', 'Finished'] }, { id: 'r', name: 'Rating', type: 'number' }], [{ t: 'Example book', a: 'Author', s: 'Want to read' }], 'gallery')]],
+  ['check', 'Habit tracker', () => [t('h2', 'Today'), ...['Exercise', 'Read', 'Meditate', 'Write'].map(x => t('todo', x)), t('divider', ''), t('h2', 'Notes'), t('p', '')]]
 ];
 function templates() {
   const ov = h('div', { class: 'ov', onmousedown: e => { if (e.target === ov) ov.remove(); } });
   ov.append(h('div', { class: 'cmd-box dbpk' }, h('h3', { style: 'margin:0 0 8px' }, 'New from template'),
-    ...TPL.map(([i, n, f]) => h('button', { class: 'pi', style: 'width:100%', onclick: () => { ov.remove(); newPage(null, n, f(), true, { icon: i }); } }, h('span', { class: 'si' }, i), n))));
+    ...TPL.map(([i, n, f]) => h('button', { class: 'pi', style: 'width:100%', onclick: () => { ov.remove(); newPage(null, n, f(), true, { icon: i }); } }, h('span', { class: 'si' }, ico(i)), n))));
   document.body.append(ov);
 }
 const _ca = commandActions;
@@ -4358,14 +4360,14 @@ async function openHistory() {
     if (!sel) return;
     let bl = []; try { bl = JSON.parse(sel.snap || '[]'); } catch {}
     det.append(h('div', {}, h('b', {}, sel.name), h('span', { class: 'muted sm' }, ' ' + (sel.email || ''))),
-      h('div', { class: 'sm muted' }, '🕘 ' + fmt(sel.t) + '  ·  💻 ' + (sel.dev || 'unknown device')), h('div', { style: 'margin:8px 0 4px;font-weight:500' }, sel.sum || ''),
+      h('div', { class: 'sm muted' }, ico('restore', 13), ' ' + fmt(sel.t) + '   ', ico('keys', 13), ' ' + (sel.dev || 'unknown device')), h('div', { style: 'margin:8px 0 4px;font-weight:500' }, sel.sum || ''),
       ...(sel.where || []).map(w => h('div', { class: 'vw' }, h('b', {}, w.k + ' '), (w.sec ? w.sec + ' › ' : '') + w.ty + (w.s ? ': ' + w.s : ''))),
       edit && sel.snap ? h('button', { class: 'btn sm pri', style: 'margin-top:10px', onclick: async () => {
         if (!confirm('Restore this version? The current content stays in history.')) return;
         await mkVer({ id, title: cur.title || '', blocks: JSON.parse(JSON.stringify(cur.blocks)) });
         cur.title = sel.title || ''; cur.blocks = bl; touch(); renderPage(); ov.remove(); toast('Version restored');
       } }, 'Restore this version') : null,
-      h('div', { class: 'vpv' }, ...bl.slice(0, 150).map(b => h('div', { style: /^h[123]$/.test(b.type) ? 'font-weight:600;margin-top:6px' : '' }, ({ bullet: '• ', todo: b.checked ? '☑ ' : '☐ ', num: '1. ' }[b.type] || '') + (tx(b) || '\u00a0')))));
+      h('div', { class: 'vpv' }, ...bl.slice(0, 150).map(b => h('div', { style: /^h[123]$/.test(b.type) ? 'font-weight:600;margin-top:6px' : '' }, ({ bullet: '• ', todo: b.checked ? '[x] ' : '[ ] ', num: '1. ' }[b.type] || '') + (tx(b) || '\u00a0')))));
   };
   who.onchange = () => { const f = V.filter(v => !who.value || v.name === who.value); sel = f[0] || null; draw(); };
   draw();
@@ -4399,6 +4401,47 @@ function openSecurity() {
 }
 const _ca = commandActions;
 commandActions = () => [{ icon: 'restore', title: 'Version history', run: openHistory }, { icon: 'lock', title: 'Security & privacy', run: openSecurity }, ..._ca()];
+})();
+
+/* ===== PAGENEST+ : icon-only UI + installable app (PWA) ===== */
+(() => {
+Object.assign(_IC, {
+  install: '<rect x="2" y="2.5" width="12" height="8.5" rx="1.5"/><path d="M8 4.5v4M6.2 7 8 8.8 9.8 7M5.5 13.5h5"/>',
+  minus: '<path d="M3 8h10"/>', code: '<path d="m5.5 4.5-3.5 3.5 3.5 3.5M10.5 4.5 14 8l-3.5 3.5"/>',
+  home: '<path d="M2.5 8 8 3l5.5 5M4 7v6h8V7"/>', heart: '<path d="M8 13.5S2.5 10 2.5 6.2A2.9 2.9 0 0 1 8 5a2.9 2.9 0 0 1 5.5 1.2C13.5 10 8 13.5 8 13.5z"/>',
+  bolt: '<path d="M9 2 4 9h4l-1 5 5-7H8z"/>', book: '<path d="M3 3h4a1 1 0 0 1 1 1v9a1 1 0 0 0-1-1H3zM13 3H9a1 1 0 0 0-1 1v9a1 1 0 0 1 1-1h4z"/>',
+  flag: '<path d="M4 14V2.5M4 3h8l-2 2.5L12 8H4"/>', tag: '<path d="M2.5 8.5V3h5.5l5.5 5.5-5.5 5.5z"/><circle cx="5.5" cy="5.5" r=".8"/>',
+  bell: '<path d="M4 11V7a4 4 0 0 1 8 0v4l1 1.5H3zM6.5 14h3"/>', mail: '<rect x="2" y="3.5" width="12" height="9" rx="1.5"/><path d="m2.5 4.5 5.5 4.5 5.5-4.5"/>',
+  globe: '<circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c2 2 2 10 0 12M8 2c-2 2-2 10 0 12"/>', chart: '<path d="M3 13V3M3 13h10M6 10V7M9 10V5M12 10V8"/>',
+  user: '<circle cx="8" cy="5.5" r="2.5"/><path d="M3 13.5c0-3 2.2-4.5 5-4.5s5 1.5 5 4.5"/>', calendar: '<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3"/>',
+  shield: '<path d="M8 2 3 4v4c0 3 2 5 5 6 3-1 5-3 5-6V4z"/>'
+});
+// Any stored emoji icon is shown as the fallback icon instead.
+const _gi = getIcon;
+getIcon = (v, f = '') => { const s = _gi(v, f); return /\p{Extended_Pictographic}/u.test(s) ? f : s; };
+
+let dp = null;
+const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); dp = e; if (cur) renderTop(); });
+addEventListener('appinstalled', () => { dp = null; toast('App installed'); if (cur) renderTop(); });
+function guide() {
+  const ov = h('div', { class: 'ov', onmousedown: e => { if (e.target === ov) ov.remove(); } });
+  ov.append(h('div', { class: 'cmd-box sec' }, h('h3', { style: 'margin:0' }, 'Install PageNest'),
+    h('div', { class: 'sm' }, 'Chrome / Edge: click the install icon at the right of the address bar, or open the browser menu and choose Install PageNest.'),
+    h('div', { class: 'sm' }, 'Safari (iPhone/iPad): tap Share, then Add to Home Screen.'),
+    h('div', { class: 'muted sm' }, 'Install needs the app to be served over HTTPS (or localhost) with manifest.webmanifest, sw.js and the icon files next to index.html.'),
+    h('button', { class: 'btn sm', onclick: () => ov.remove() }, 'Close')));
+  document.body.append(ov);
+}
+async function installApp() {
+  if (standalone()) return toast('Already running as an app');
+  if (dp) { dp.prompt(); await dp.userChoice; dp = null; if (cur) renderTop(); } else guide();
+}
+const _rt3 = renderTop;
+renderTop = () => { _rt3(); const t = $('#top'); if (t && cur && dp && !standalone()) t.insertBefore(h('button', { class: 'btn sm', title: 'Install app', onclick: installApp }, ico('install', 14), ' Install'), t.lastElementChild); };
+const _ca3 = commandActions;
+commandActions = () => [...(standalone() ? [] : [{ icon: 'install', title: 'Install app', run: installApp }]), ..._ca3()];
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 })();
 
 </script>
