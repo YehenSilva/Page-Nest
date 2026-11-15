@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com https://apis.google.com blob:; worker-src 'self' blob: https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' data: https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' blob: data: https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.gstatic.com https://cdnjs.cloudflare.com; frame-src https: blob: data:; object-src blob: data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<script>if(top!==self){try{top.location=self.location}catch(e){document.documentElement.innerHTML=""}}</script>
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PageNest</title>
 
@@ -1270,6 +1274,14 @@ html:not([data-theme=dark]) aside{background:color-mix(in srgb,#8d90cf 14%,var(-
 .bm{display:block;border:1px solid var(--bd);border-radius:8px;padding:10px 14px;position:relative}.bm:hover{background:var(--hover)}.bmt{font-weight:500}.bmx{position:absolute;right:8px;top:8px}
 .mn{background:var(--hover);border-radius:4px;padding:0 4px}.bl{margin-top:40px;border-top:1px solid var(--bd);padding-top:12px}
 @media(max-width:640px){.cols{flex-direction:column}}
+/* ===== HISTORY + SECURITY ===== */
+.vbox{width:min(900px,95vw);height:min(600px,85vh);padding:12px;display:flex;flex-direction:column;max-width:none}
+.vh{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}.vm{display:flex;gap:12px;flex:1;min-height:0}
+.vl{width:300px;overflow:auto;display:flex;flex-direction:column;gap:2px}.vd{flex:1;overflow:auto;padding:0 6px}
+.vi{flex-direction:column;align-items:flex-start;text-align:left;padding:6px 8px;border-radius:6px;width:100%}.vi.on{background:var(--acbg)}.vt{font-weight:500;font-size:13px}
+.vw{font-size:13px;padding:2px 0;color:var(--tx2)}.vw b{color:var(--tx)}.vpv{border:1px solid var(--bd);border-radius:6px;padding:8px 12px;margin-top:10px;font-size:13px;max-height:260px;overflow:auto}
+.sec{padding:18px;display:flex;flex-direction:column;gap:10px;max-width:420px}
+@media(max-width:700px){.vm{flex-direction:column}.vl{width:auto;max-height:200px}}
 </style>
 </head>
 <body>
@@ -4259,6 +4271,134 @@ function templates() {
 }
 const _ca = commandActions;
 commandActions = () => [{ icon: 'doc', title: 'New from template…', run: templates }, ..._ca()];
+})();
+
+/* ===== PAGENEST+ : version history (who / what / when / where) + security ===== */
+(() => {
+const FS = () => import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+const tx = b => plain(b.html || '') || b.code || b.tex || b.url || (b.db ? 'database' : '');
+const device = () => { const u = navigator.userAgent, b = /Edg\//.test(u) ? 'Edge' : /Firefox\//.test(u) ? 'Firefox' : /Chrome\//.test(u) ? 'Chrome' : /Safari\//.test(u) ? 'Safari' : 'Browser', o = /Windows/.test(u) ? 'Windows' : /Android/.test(u) ? 'Android' : /iPhone|iPad/.test(u) ? 'iOS' : /Mac/.test(u) ? 'macOS' : /Linux|X11/.test(u) ? 'Linux' : ''; return [b, o, Intl.DateTimeFormat().resolvedOptions().timeZone].filter(Boolean).join(' · '); };
+let localOnly = false;
+const denied = e => { if (e && e.code === 'permission-denied' && !localOnly) { localOnly = true; toast('History saved on this device only — Firestore rules for versions are not active'); } return localOnly; };
+const vList = async (id, n = 60) => {
+  if (!window.__demoMode && !localOnly) {
+    try {
+      const { limit } = await FS(); const s = await getDocs(query(collection(db, 'pages', id, 'versions'), orderBy('t', 'desc'), limit(n)));
+      return s.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { if (!denied(e)) throw e; }
+  }
+  return ls('pn_ver_' + id, []).slice(0, n);
+};
+const vAdd = async (id, rec) => {
+  if (!window.__demoMode && !localOnly) {
+    try { await setDoc(doc(collection(db, 'pages', id, 'versions')), rec); return; } catch (e) { if (!denied(e)) throw e; }
+  }
+  lset('pn_ver_' + id, [{ id: uid8(), ...rec }, ...ls('pn_ver_' + id, [])].slice(0, 30));
+};
+function diff(p, c) {
+  const pb = p ? p.blocks : [], o = new Map(pb.map(b => [b.id, b])), nw = new Map(c.blocks.map(b => [b.id, b]));
+  let a = 0, e = 0, r = 0, sec = '', W = [];
+  c.blocks.forEach(b => {
+    if (/^h[123]$/.test(b.type)) sec = tx(b) || sec;
+    const q = o.get(b.id);
+    if (!q) { a++; W.push({ k: '+', ty: b.type, sec, s: tx(b).slice(0, 70) }); }
+    else if (JSON.stringify(q) !== JSON.stringify(b)) { e++; W.push({ k: '~', ty: b.type, sec, s: tx(b).slice(0, 70) }); }
+  });
+  sec = '';
+  pb.forEach(b => { if (/^h[123]$/.test(b.type)) sec = tx(b) || sec; if (!nw.has(b.id)) { r++; W.push({ k: '−', ty: b.type, sec, s: tx(b).slice(0, 70) }); } });
+  const t = !!p && p.title !== c.title, mv = c.blocks.filter(b => o.has(b.id)).map(b => b.id).join() !== pb.filter(b => nw.has(b.id)).map(b => b.id).join();
+  if (t) W.unshift({ k: '~', ty: 'title', sec: '', s: c.title });
+  const bits = [a && '+' + a + ' added', e && e + ' edited', r && r + ' removed', t && 'title changed', mv && 'reordered'].filter(Boolean);
+  return { n: a + e + r + (t ? 1 : 0) + (mv ? 1 : 0), sum: bits.join(', ') || 'No changes', where: W };
+}
+const last = {}, base = {}, lastT = {}, tmr = {}, pend = {};
+async function mkVer(c) {
+  try {
+    if (!(c.id in last)) { const l = (await vList(c.id, 1))[0]; last[c.id] = l && l.snap ? { title: l.title, blocks: JSON.parse(l.snap) } : null; }
+    const mk = (cc, d, sum) => ({ uid: me.uid, name: me.displayName || me.email || 'User', email: me.email || '', t: Date.now(), title: cc.title, sum, n: d.n, where: d.where.slice(0, 12), dev: device(), snap: JSON.stringify(cc.blocks).length < 900000 ? JSON.stringify(cc.blocks) : '' });
+    if (!last[c.id] && base[c.id]) { const bs = { id: c.id, ...base[c.id] }; await vAdd(c.id, mk(bs, { n: 0, where: [] }, 'Baseline before first tracked edit')); last[c.id] = base[c.id]; }
+    const p = last[c.id], d = diff(p, c);
+    if (p && !d.n) return;
+    await vAdd(c.id, mk(c, d, p ? d.sum : 'Initial version'));
+    last[c.id] = { title: c.title, blocks: c.blocks }; lastT[c.id] = Date.now();
+  } catch (e) { console.warn('version history', e); }
+}
+const run = id => { const x = pend[id]; delete pend[id]; clearTimeout(tmr[id]); delete tmr[id]; return x ? mkVer(x) : null; };
+function queueVer(c) {
+  pend[c.id] = c; const age = Date.now() - (lastT[c.id] || 0);
+  if (age > 90000) run(c.id); else if (!tmr[c.id]) tmr[c.id] = setTimeout(() => run(c.id), 90000 - age);
+}
+const _sv = save;
+save = async () => {
+  if (!cur || !dirty || !canEdit()) return _sv();
+  const c = { id: cur.id, title: cur.title || '', blocks: JSON.parse(JSON.stringify(cur.blocks || [])) };
+  await _sv();
+  if (me && $('#st') && $('#st').textContent === 'Saved') queueVer(c);
+};
+const _rp = renderPage;
+renderPage = () => { _rp(); if (cur && !base[cur.id]) base[cur.id] = { title: cur.title || '', blocks: JSON.parse(JSON.stringify(cur.blocks || [])) }; };
+document.addEventListener('visibilitychange', () => { if (document.hidden) Object.keys(pend).forEach(run); });
+
+/* ---- History viewer ---- */
+async function openHistory() {
+  if (!cur || !me) return;
+  const id = cur.id, edit = canEdit(), fmt = t => new Date(t).toLocaleString();
+  const ov = h('div', { class: 'ov', onmousedown: e => { if (e.target === ov) ov.remove(); } }), list = h('div', { class: 'vl' }, 'Loading…'), det = h('div', { class: 'vd' }), who = h('select', { class: 'dbq' });
+  ov.append(h('div', { class: 'cmd-box vbox' }, h('div', { class: 'vh' }, h('b', {}, 'Version history'), h('span', { style: 'flex:1' }), who, h('button', { onclick: () => ov.remove() }, '×')), h('div', { class: 'vm' }, list, det)));
+  document.body.append(ov);
+  let V = [], sel = null;
+  try { await run(id); V = await vList(id); } catch (e) { list.textContent = 'Could not load history (' + (e.code || e.message) + ').'; return; }
+  if (!V.length) { list.textContent = 'No versions yet. They appear after your next edit.'; return; }
+  who.append(h('option', { value: '' }, 'Everyone'), ...[...new Set(V.map(v => v.name))].map(n => h('option', { value: n }, n)));
+  sel = V[0];
+  const draw = () => {
+    list.innerHTML = ''; det.innerHTML = '';
+    V.filter(v => !who.value || v.name === who.value).forEach(v => list.append(h('button', { class: 'vi' + (v === sel ? ' on' : ''), onclick: () => { sel = v; draw(); } },
+      h('div', { class: 'vt' }, fmt(v.t)), h('div', { class: 'sm muted' }, (v.uid === me.uid ? 'You' : v.name) + ' · ' + (v.sum || '')))));
+    if (!sel) return;
+    let bl = []; try { bl = JSON.parse(sel.snap || '[]'); } catch {}
+    det.append(h('div', {}, h('b', {}, sel.name), h('span', { class: 'muted sm' }, ' ' + (sel.email || ''))),
+      h('div', { class: 'sm muted' }, '🕘 ' + fmt(sel.t) + '  ·  💻 ' + (sel.dev || 'unknown device')), h('div', { style: 'margin:8px 0 4px;font-weight:500' }, sel.sum || ''),
+      ...(sel.where || []).map(w => h('div', { class: 'vw' }, h('b', {}, w.k + ' '), (w.sec ? w.sec + ' › ' : '') + w.ty + (w.s ? ': ' + w.s : ''))),
+      edit && sel.snap ? h('button', { class: 'btn sm pri', style: 'margin-top:10px', onclick: async () => {
+        if (!confirm('Restore this version? The current content stays in history.')) return;
+        await mkVer({ id, title: cur.title || '', blocks: JSON.parse(JSON.stringify(cur.blocks)) });
+        cur.title = sel.title || ''; cur.blocks = bl; touch(); renderPage(); ov.remove(); toast('Version restored');
+      } }, 'Restore this version') : null,
+      h('div', { class: 'vpv' }, ...bl.slice(0, 150).map(b => h('div', { style: /^h[123]$/.test(b.type) ? 'font-weight:600;margin-top:6px' : '' }, ({ bullet: '• ', todo: b.checked ? '☑ ' : '☐ ', num: '1. ' }[b.type] || '') + (tx(b) || '\u00a0')))));
+  };
+  who.onchange = () => { const f = V.filter(v => !who.value || v.name === who.value); sel = f[0] || null; draw(); };
+  draw();
+}
+const _rt = renderTop;
+renderTop = () => { _rt(); const t = $('#top'); if (t && cur && me) t.insertBefore(h('button', { class: 'btn sm', title: 'Version history (Ctrl+Shift+H)', onclick: openHistory }, ico('restore', 14), ' History'), t.lastElementChild); };
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'h') { e.preventDefault(); openHistory(); } });
+
+/* ---- Security: idle sign-out, privacy blur, local data wipe ---- */
+const SEC = () => ({ idle: 30, blur: false, ...ls('pn_sec', {}) });
+const wipe = () => Object.keys(localStorage).filter(k => /^pn_(last|open|fav_|ver_)/.test(k)).forEach(k => localStorage.removeItem(k));
+let idleT;
+const arm = () => {
+  clearTimeout(idleT); const m = SEC().idle;
+  if (!m || !me || window.__demoMode) return;
+  idleT = setTimeout(async () => { flush(); try { await signOut(auth); } catch {} wipe(); toast('Signed out after ' + m + ' min of inactivity'); }, m * 60000);
+};
+['keydown', 'mousedown', 'touchstart', 'scroll'].forEach(ev => addEventListener(ev, arm, { passive: true, capture: true }));
+arm();
+document.addEventListener('visibilitychange', () => { document.body.style.filter = document.hidden && SEC().blur ? 'blur(14px)' : ''; });
+function openSecurity() {
+  const s = SEC(), ov = h('div', { class: 'ov', onmousedown: e => { if (e.target === ov) ov.remove(); } });
+  const idle = h('select', { onchange: e => { s.idle = +e.target.value; lset('pn_sec', s); arm(); } }, ...[0, 5, 15, 30, 60].map(m => h('option', { value: m, selected: s.idle === m }, m ? m + ' minutes' : 'Never')));
+  const bl = h('input', { type: 'checkbox', onchange: e => { s.blur = e.target.checked; lset('pn_sec', s); } }); bl.checked = s.blur;
+  ov.append(h('div', { class: 'cmd-box sec' }, h('h3', { style: 'margin:0' }, 'Security & privacy'),
+    h('label', {}, 'Auto sign-out after inactivity: ', idle), h('label', {}, bl, ' Blur page when the tab is hidden'),
+    h('button', { class: 'btn sm', onclick: () => { wipe(); toast('Local data cleared'); } }, 'Clear local cache now'),
+    h('div', { class: 'muted sm' }, 'Page content is protected by Firestore rules (firestore.rules); history is append-only.'),
+    h('button', { class: 'btn sm', onclick: () => ov.remove() }, 'Close')));
+  document.body.append(ov);
+}
+const _ca = commandActions;
+commandActions = () => [{ icon: 'restore', title: 'Version history', run: openHistory }, { icon: 'lock', title: 'Security & privacy', run: openSecurity }, ..._ca()];
 })();
 
 </script>
