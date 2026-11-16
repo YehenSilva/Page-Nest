@@ -1424,6 +1424,309 @@ html:not([data-theme=dark]) aside{background:color-mix(in srgb,#8d90cf 14%,var(-
 .mn{--mi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round'%3E%3Crect x='2.5' y='3.5' width='11' height='10' rx='1.5'/%3E%3Cpath d='M2.5 6.5h11M5.5 2v3M10.5 2v3'/%3E%3C/svg%3E")}
 .ed a[href^="#/"]{--mi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 2h5l3.5 3.5V13a1 1 0 0 1-1 1h-7.5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z'/%3E%3Cpath d='M9 2v3.5h3.5'/%3E%3C/svg%3E")}
 .egrid button{padding:6px}
+
+/* ===== 1. GRAPH VIEW ===== */
+.graph-ov { padding: 3vh 20px; align-items: center; justify-content: center; }
+.graph-box {
+  width: min(1100px, 96vw);
+  height: min(720px, 92vh);
+  background: var(--bg);
+  border-radius: 16px;
+  border: 1px solid var(--bd);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.graph-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--bd);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  z-index: 5;
+}
+.graph-inp {
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  width: 180px;
+}
+#graph-canvas {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+#graph-canvas:active { cursor: grabbing; }
+
+/* ===== 2. PRESENTATION / SLIDE DECK ===== */
+.deck-ov {
+  background: #0d0f12;
+  color: #f0f2f5;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 250;
+}
+.deck-card {
+  width: min(880px, 90vw);
+  max-height: 82vh;
+  overflow-y: auto;
+  background: #17191e;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 56px 48px;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: slideFadeIn 0.25s ease-out;
+}
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.deck-bar {
+  position: fixed;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(23, 25, 30, 0.85);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 18px;
+  border-radius: 999px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.deck-bar button { color: #f0f2f5; padding: 4px 10px; font-size: 13px; }
+.deck-bar button:hover { background: rgba(255,255,255,0.1); }
+
+/* ===== 4. FLASHCARDS / STUDY MODE ===== */
+.study-ov {
+  background: rgba(10, 10, 12, 0.7);
+  padding: 4vh 16px;
+  align-items: center;
+  justify-content: center;
+}
+.study-box {
+  width: min(620px, 94vw);
+  background: var(--bg);
+  border-radius: 18px;
+  border: 1px solid var(--bd);
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.study-prog {
+  width: 100%;
+  height: 4px;
+  background: var(--hover);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 12px 0 20px;
+}
+.study-bar {
+  height: 100%;
+  background: var(--ac);
+  transition: width 0.3s ease;
+}
+.study-card-wrap {
+  perspective: 1000px;
+  width: 100%;
+  height: 280px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+.study-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px;
+}
+.study-card.flipped { transform: rotateY(180deg); }
+.study-front, .study-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 14px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid var(--bd);
+  background: var(--bg2);
+  box-sizing: border-box;
+}
+.study-back {
+  transform: rotateY(180deg);
+  background: var(--bg);
+  border-color: var(--ac);
+}
+.study-btns { display: flex; gap: 8px; width: 100%; justify-content: center; }
+
+/* ===== 5. CHARTS BLOCK ===== */
+.chart-block {
+  border: 1px solid var(--bd);
+  border-radius: 12px;
+  background: var(--bg2);
+  padding: 16px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+.chart-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.chart-svg {
+  width: 100%;
+  max-height: 260px;
+  display: block;
+}
+.chart-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--bd-subtle);
+}
+
+/* ===== 6. ZEN FOCUS DOCK & AMBIENT ENGINE ===== */
+#zen-dock {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--bd);
+  box-shadow: var(--shadow-lg);
+  border-radius: 999px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 220;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.zen-pomo {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tx);
+  min-width: 52px;
+  text-align: center;
+}
+
+/* ===== 7. PRIVATE VAULT / ENCRYPTION ===== */
+.vault-card {
+  max-width: 440px;
+  margin: 48px auto;
+  text-align: center;
+  padding: 36px 28px;
+  border: 1px solid var(--bd);
+  border-radius: 16px;
+  background: var(--bg2);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===== 8. VOICE DICTATION ===== */
+.voice-block {
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  background: var(--bg2);
+  padding: 14px 16px;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.voice-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+}
+.vbar {
+  width: 3.5px;
+  height: 8px;
+  background: var(--ac);
+  border-radius: 2px;
+  transition: height 0.1s ease;
+}
+.voice-wave.active .vbar:nth-child(1) { animation: wavePulse 0.4s infinite alternate; }
+.voice-wave.active .vbar:nth-child(2) { animation: wavePulse 0.6s infinite alternate 0.1s; }
+.voice-wave.active .vbar:nth-child(3) { animation: wavePulse 0.35s infinite alternate 0.2s; }
+.voice-wave.active .vbar:nth-child(4) { animation: wavePulse 0.5s infinite alternate 0.15s; }
+.voice-wave.active .vbar:nth-child(5) { animation: wavePulse 0.45s infinite alternate 0.05s; }
+@keyframes wavePulse { from { height: 6px; } to { height: 22px; } }
+
+/* ===== 10. ENHANCED EMBEDS & BOOKMARK CARDS ===== */
+.bm-card {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  background: var(--bg2);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  margin: 6px 0;
+}
+.bm-card:hover {
+  border-color: var(--ac);
+  box-shadow: var(--shadow-sm);
+}
+.bm-body {
+  flex: 1;
+  padding: 12px 14px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.bm-host {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--tx3);
+}
+.bm-icon { width: 14px; height: 14px; border-radius: 2px; }
+.emb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--bd);
+  background: #000;
+  margin: 6px 0;
+}
+.emb iframe { width: 100%; height: 100%; border: 0; }
+.emb.spotify { aspect-ratio: auto; height: 152px; background: transparent; }
+
 </style>
 </head>
 <body>
@@ -1650,6 +1953,10 @@ function cleanDoc(d) {
   if (!d) return d;
   d.icon = getIcon(d.icon, '');
   d.cover = getIcon(d.cover, '');
+  d.encrypted = !!d.encrypted;
+  d.cipher = d.cipher || null;
+  d.salt = d.salt || null;
+  d.iv = d.iv || null;
   (d.blocks || []).forEach(b => {
     if (b.type === 'callout') b.icon = getIcon(b.icon, 'info');
     else if (b.icon) b.icon = getIcon(b.icon, '');
@@ -1702,7 +2009,13 @@ x:'<path d="m4 4 8 8M12 4l-8 8"/>',lock:'<rect x="3.5" y="7" width="9" height="6
 external:'<path d="M6 3H3.5v9.5H13V10M9 3h4v4M13 3 7.5 8.5"/>',menu:'<path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>',alert:'<path d="M8 2.5 14 13H2z"/><path d="M8 6.5v3M8 11.2v.1"/>',
 settings:'<path d="M2.5 5h6M11.5 5h2M2.5 11h2M7.5 11h6"/><circle cx="10" cy="5" r="1.5"/><circle cx="6" cy="11" r="1.5"/>',logout:'<path d="M6.5 3h-3v10h3M10 5.5 12.5 8 10 10.5M12.5 8h-6"/>',
 sheet:'<rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/><path d="M2.5 6.5h11M2.5 10h11M6.5 6.5v7"/>',archive:'<rect x="2.5" y="3" width="11" height="3" rx="1"/><path d="M3.5 6v6.5h9V6M6.5 9h3"/>',
-video:'<rect x="2" y="3.5" width="9" height="9" rx="1.5"/><path d="m11 7 3-1.8v5.6L11 9z"/>',music:'<path d="M6 12V4l7-1.5V10"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="11.5" cy="10" r="1.5"/>'};
+video:'<rect x="2" y="3.5" width="9" height="9" rx="1.5"/><path d="m11 7 3-1.8v5.6L11 9z"/>',music:'<path d="M6 12V4l7-1.5V10"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="11.5" cy="10" r="1.5"/>',
+graph:'<circle cx="4" cy="4" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="8" cy="12" r="2"/><path d="m5.4 5.4 5.2 5.2M10.6 5.4 5.4 10.6"/>',
+play:'<polygon points="5 3.5 13 8 5 12.5 5 3.5"/>',
+cards:'<rect x="2.5" y="4.5" width="8.5" height="9.5" rx="1.5"/><path d="M5.5 2.5h7a1.5 1.5 0 0 1 1.5 1.5v8"/>',
+headphones:'<path d="M3 10V8a5 5 0 0 1 10 0v2"/><rect x="2" y="9.5" width="3" height="4.5" rx="1"/><rect x="11" y="9.5" width="3" height="4.5" rx="1"/>',
+mic:'<rect x="5.5" y="2" width="5" height="8" rx="2.5"/><path d="M3.5 7.5a4.5 4.5 0 0 0 9 0M8 12.5v2M5.5 14.5h5"/>',
+vault:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><circle cx="8" cy="8.5" r="2.5"/><path d="M8 8.5v1.5M10.5 8.5h-1M6.5 8.5h-1"/>'};
 const expIcon=v=>_IC[v]?'':(v||'');
 const ico=(n,sz=16)=>{
   if(!n || n==='null' || n==='undefined' || n==='none') return '';
@@ -2545,7 +2858,7 @@ async function save() {
     return;
   }
   const id = cur.id;
-  const blocks = JSON.parse(JSON.stringify(cur.blocks || []));
+  const blocks = (cur.encrypted && !cur._unlocked) ? [] : JSON.parse(JSON.stringify(cur.blocks || []));
   if (JSON.stringify(blocks).length > 950000) {
     toast('Page is close to 1 MB limit — use sub-pages.');
   }
@@ -2557,6 +2870,10 @@ async function save() {
       icon: getIcon(cur.icon),
       cover: getIcon(cur.cover),
       blocks,
+      encrypted: !!cur.encrypted,
+      cipher: cur.cipher || null,
+      salt: cur.salt || null,
+      iv: cur.iv || null,
       updatedAt: serverTimestamp(),
       lastEditor: me.uid
     });
@@ -2692,7 +3009,11 @@ function renderSidebar() {
   const roots = live.filter(p => !p.parentId || !live.some(x => x.id === p.parentId));
   const hd = h('div', { class: 'sh-h' },
     h('span', {}, 'Workspace'),
-    h('button', { title: 'New page', onclick: () => newPage(null, '', [], true) }, '+')
+    h('div', { style: 'display:flex;gap:4px;align-items:center' },
+      h('button', { title: "Today's daily note (Ctrl+J)", onclick: openDailyNote }, ico('calendar', 13)),
+      h('button', { title: 'Knowledge graph view (Ctrl+Shift+G)', onclick: openGraphView }, ico('graph', 13)),
+      h('button', { title: 'New page', onclick: () => newPage(null, '', [], true) }, '+')
+    )
   );
   hd.addEventListener('dragover', e => { if (dragPage) e.preventDefault(); });
   hd.addEventListener('drop', e => { if (dragPage) { e.preventDefault(); movePage(dragPage, null); } });
@@ -2742,6 +3063,8 @@ function pageMenu(e, p) {
       })
     } : null,
     { icon: 'star', label: fav ? 'Remove from favorites' : 'Add to favorites', fn: () => toggleFav(p.id) },
+    { icon: 'play', label: 'Presentation mode', fn: () => { go(p.id); setTimeout(openPresentation, 60); } },
+    { icon: 'cards', label: 'Study mode (Flashcards)', fn: () => { go(p.id); setTimeout(openStudyMode, 60); } },
     { icon: 'link', label: 'Copy link', fn: () => copyLink(p.id) },
     canEditPage(p) ? { icon: 'copy', label: 'Duplicate', fn: () => dupPage(p) } : null,
     canEditPage(p) ? '-' : null,
@@ -2932,7 +3255,12 @@ function renderPage() {
   });
 
   renderTop();
-  renderBlocks();
+  if (cur.encrypted && !cur._unlocked) {
+    blocks.append(vaultUnlockEl());
+    addrow.style.display = 'none';
+  } else {
+    renderBlocks();
+  }
   renderSidebar();
   document.title = (cur.title || 'Untitled') + ' · PageNest';
   lset('pn_last', cur.id);
@@ -3004,9 +3332,13 @@ function pageMenuTop(x, y) {
     { icon: 'width', label: prefs.fw ? 'Standard width' : 'Full width', fn: () => { prefs.fw = !prefs.fw; lset('pn_prefs', prefs); $('#doc').classList.toggle('fw', prefs.fw); } },
     { icon: 'list', label: 'Outline', fn: () => openOutline() },
     { icon: 'info', label: 'Page info', fn: openPageInfo },
+    { icon: 'play', label: 'Presentation mode (Ctrl+Shift+P)', fn: openPresentation },
+    { icon: 'cards', label: 'Study mode (Flashcards)', fn: openStudyMode },
+    { icon: 'graph', label: 'Knowledge graph (Ctrl+Shift+G)', fn: openGraphView },
     { icon: 'focus', label: 'Focus mode', fn: toggleFocus },
     { icon: 'type', label: prefs.sm ? 'Normal text size' : 'Small text', fn: () => { prefs.sm = !prefs.sm; lset('pn_prefs', prefs); applyPrefs(); } },
     role() !== 'viewer' ? { icon: 'lock', label: cur.locked ? 'Unlock page' : 'Lock page', fn: toggleLock } : null,
+    me && canEdit() ? { icon: 'vault', label: cur.encrypted ? 'Remove page encryption' : 'Encrypt with passphrase', fn: openEncryptModal } : null,
     { icon: 'settings', label: 'Settings', fn: () => openSettings() },
     '-',
     me && canEdit() ? { icon: 'smile', label: cur.icon ? 'Change icon' : 'Add icon', fn: e => openEmojiPicker(e || { clientX: x, clientY: y }, v => { cur.icon = v; touch(); renderPage(); }) } : null,
@@ -3095,17 +3427,29 @@ function openPageInfo() {
     r('Blocks', bl.length), r('To-dos', todos.length ? done + ' of ' + todos.length + ' done' : 'None'), r('Last edited', upd)));
 }
 function openShortcuts() {
-  const L = [['Ctrl K', 'Search and commands'], ['Ctrl ,', 'Settings'], ['Ctrl /  or  ?', 'This list'], ['Ctrl \\', 'Show or hide sidebar'], ['Alt N', 'New page'],
-    ['Ctrl S', 'Save now'], ['Ctrl Shift F', 'Focus mode'], ['Ctrl Shift O', 'Page outline'], ['Ctrl Shift I', 'Page info'], ['/', 'Insert a block'], ['Ctrl D', 'Duplicate block'], ['Ctrl Shift ↑ / ↓', 'Move block'], ['Ctrl Enter', 'Check a to-do'], ['Ctrl B / I / U', 'Bold, italic, underline'], ['Esc', 'Leave focus mode']];
+  const L = [
+    ['Ctrl K', 'Search and commands'], ['Ctrl ,', 'Settings'], ['Ctrl /  or  ?', 'This list'], ['Ctrl \\', 'Show or hide sidebar'],
+    ['Alt N', 'New page'], ['Ctrl J', "Today's daily note"], ['Ctrl Shift P', 'Presentation mode'], ['Ctrl Shift G', 'Knowledge graph view'],
+    ['Ctrl Shift S', 'Flashcard study mode'], ['Ctrl Shift F', 'Zen focus mode with Pomodoro'], ['Ctrl S', 'Save now'],
+    ['Ctrl Shift O', 'Page outline'], ['Ctrl Shift I', 'Page info'], ['/', 'Insert a block (/chart, /voice, etc.)'],
+    ['Ctrl D', 'Duplicate block'], ['Ctrl Shift ↑ / ↓', 'Move block'], ['Ctrl Enter', 'Check a to-do'], ['Ctrl B / I / U', 'Bold, italic, underline'], ['Esc', 'Leave focus mode']
+  ];
   modal('Keyboard shortcuts', h('div', { class: 'set' }, L.map(([k, d]) => h('div', { class: 'srow' }, h('div', { class: 'sl' }, d), h('span', { class: 'kbd' }, k)))));
 }
 function toggleFocus(on) {
   const el = document.documentElement; const v = typeof on === 'boolean' ? on : !el.classList.contains('focus');
-  el.classList.toggle('focus', v); if (v) toast('Focus mode. Press Esc to exit');
+  el.classList.toggle('focus', v);
+  setupZenDock();
+  if (v) toast('Zen focus mode active. Esc to exit');
 }
 function commandActions() {
   return [
-    { icon: 'focus', title: 'Toggle focus mode', run: () => toggleFocus() },
+    { icon: 'calendar', title: "Today's daily note (Ctrl+J)", run: openDailyNote },
+    { icon: 'graph', title: 'Knowledge graph view (Ctrl+Shift+G)', run: openGraphView },
+    { icon: 'play', title: 'Presentation mode (Ctrl+Shift+P)', run: openPresentation },
+    { icon: 'cards', title: 'Study mode (Flashcards) (Ctrl+Shift+S)', run: openStudyMode },
+    { icon: 'vault', title: 'Lock / Encrypt page with passphrase', run: openEncryptModal },
+    { icon: 'focus', title: 'Toggle Zen focus mode', run: () => toggleFocus() },
     { icon: 'list', title: 'Page outline', run: () => openOutline() },
     { icon: 'info', title: 'Page info', run: openPageInfo },
     { icon: 'copy', title: 'Copy page as Markdown', run: () => cur && navigator.clipboard.writeText(toMd()).then(() => toast('Markdown copied')) },
@@ -3120,6 +3464,10 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && document.documentElement.classList.contains('focus') && !document.querySelector('.ov,.pop')) toggleFocus(false);
   else if (m && e.key === '/') { e.preventDefault(); openShortcuts(); }
   else if (!m && !e.altKey && e.key === '?' && !typing) { e.preventDefault(); openShortcuts(); }
+  else if (m && !e.shiftKey && e.key.toLowerCase() === 'j') { e.preventDefault(); openDailyNote(); }
+  else if (m && e.shiftKey && e.key.toLowerCase() === 'p') { e.preventDefault(); openPresentation(); }
+  else if (m && e.shiftKey && e.key.toLowerCase() === 'g') { e.preventDefault(); openGraphView(); }
+  else if (m && e.shiftKey && e.key.toLowerCase() === 's') { e.preventDefault(); openStudyMode(); }
   else if (m && e.shiftKey && e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFocus(); }
   else if (m && e.shiftKey && e.key.toLowerCase() === 'o') { e.preventDefault(); openOutline(); }
   else if (m && e.shiftKey && e.key.toLowerCase() === 'i') { e.preventDefault(); openPageInfo(); }
@@ -3134,6 +3482,1022 @@ document.addEventListener('scroll', e => {
 document.body.append(h('button', { class: 'fxb', onclick: () => toggleFocus(false) }, ico('x', 14), ' Exit focus'));
 addEventListener('offline', () => toast('You are offline. Changes will save when you reconnect'));
 addEventListener('online', () => toast('Back online'));
+
+/* =====================================================
+   10 UNIQUE WORKSPACE SUPERPOWERS
+   ===================================================== */
+
+/* 1. INTERACTIVE KNOWLEDGE GRAPH VIEW */
+function openGraphView() {
+  const live = [...pages.values()].filter(p => !p.trashed);
+  if (!live.length) return toast('No pages available for graph');
+  const ov = h('div', { class: 'ov graph-ov', onmousedown: e => { if (e.target === ov) ov.remove(); } });
+  const qInp = h('input', { class: 'graph-inp', placeholder: 'Filter nodes…' });
+  const statSpan = h('span', { class: 'sm muted' });
+  const closeBtn = h('button', { class: 'btn sm', onclick: () => ov.remove() }, '× Close');
+  const bar = h('div', { class: 'graph-bar' },
+    h('div', { style: 'display:flex;align-items:center;gap:12px' },
+      ico('graph', 18),
+      h('b', {}, 'Knowledge Graph'),
+      statSpan
+    ),
+    h('div', { style: 'display:flex;align-items:center;gap:10px' },
+      qInp,
+      closeBtn
+    )
+  );
+
+  const canvas = h('canvas', { id: 'graph-canvas' });
+  const box = h('div', { class: 'graph-box' }, bar, canvas);
+  ov.append(box);
+  document.body.append(ov);
+
+  const ctx = canvas.getContext('2d');
+  let width = 800, height = 600;
+  const resize = () => {
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    width = r.width || 800; height = r.height || 600;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+  };
+  setTimeout(resize, 30);
+
+  const nodes = live.map(p => ({
+    id: p.id,
+    title: p.title || 'Untitled',
+    icon: getIcon(p.icon),
+    isCur: cur && cur.id === p.id,
+    x: (width / 2) + (Math.random() - 0.5) * (width * 0.6),
+    y: (height / 2) + (Math.random() - 0.5) * (height * 0.6),
+    vx: 0,
+    vy: 0,
+    radius: cur && cur.id === p.id ? 8 : 6
+  }));
+  const nodeMap = new Map(nodes.map(n => [n.id, n]));
+
+  const edges = [];
+  live.forEach(p => {
+    if (p.parentId && nodeMap.has(p.parentId)) {
+      edges.push({ s: nodeMap.get(p.parentId), t: nodeMap.get(p.id) });
+    }
+    (p.blocks || []).forEach(b => {
+      const text = (b.html || '') + ' ' + (b.body || '') + (b.pageId ? ' #/' + b.pageId : '');
+      const m = text.match(/#\/([\w-]+)/g) || [];
+      m.forEach(link => {
+        const targetId = link.replace('#/', '');
+        if (targetId !== p.id && nodeMap.has(targetId)) {
+          edges.push({ s: nodeMap.get(p.id), t: nodeMap.get(targetId) });
+        }
+      });
+    });
+  });
+
+  statSpan.textContent = `${nodes.length} pages · ${edges.length} connections`;
+
+  let filterText = '';
+  qInp.oninput = () => { filterText = qInp.value.trim().toLowerCase(); };
+
+  let camX = 0, camY = 0, zoom = 1;
+  let draggingNode = null, isPanning = false, panStart = { x: 0, y: 0 };
+  let hoveredNode = null;
+
+  canvas.onmousedown = ev => {
+    const r = canvas.getBoundingClientRect();
+    const mx = (ev.clientX - r.left - camX) / zoom;
+    const my = (ev.clientY - r.top - camY) / zoom;
+    const hit = nodes.find(n => Math.hypot(n.x - mx, n.y - my) <= (n.radius + 6));
+    if (hit) {
+      draggingNode = hit;
+    } else {
+      isPanning = true;
+      panStart = { x: ev.clientX - camX, y: ev.clientY - camY };
+    }
+  };
+
+  const onMouseMove = ev => {
+    if (!document.body.contains(ov)) return;
+    const r = canvas.getBoundingClientRect();
+    const mx = (ev.clientX - r.left - camX) / zoom;
+    const my = (ev.clientY - r.top - camY) / zoom;
+
+    if (draggingNode) {
+      draggingNode.x = mx;
+      draggingNode.y = my;
+      draggingNode.vx = 0;
+      draggingNode.vy = 0;
+    } else if (isPanning) {
+      camX = ev.clientX - panStart.x;
+      camY = ev.clientY - panStart.y;
+    } else {
+      hoveredNode = nodes.find(n => Math.hypot(n.x - mx, n.y - my) <= (n.radius + 6)) || null;
+      canvas.style.cursor = hoveredNode ? 'pointer' : 'grab';
+    }
+  };
+
+  const onMouseUp = () => {
+    if (draggingNode && hoveredNode === draggingNode) {
+      go(draggingNode.id);
+      ov.remove();
+    }
+    draggingNode = null;
+    isPanning = false;
+  };
+
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUp);
+
+  canvas.onwheel = ev => {
+    ev.preventDefault();
+    const delta = ev.deltaY < 0 ? 1.1 : 0.9;
+    zoom = Math.max(0.35, Math.min(2.8, zoom * delta));
+  };
+
+  const isDark = () => document.documentElement.dataset.theme === 'dark';
+  const loop = () => {
+    if (!document.body.contains(ov)) {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      return;
+    }
+
+    const cx = width / 2, cy = height / 2;
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      a.vx += (cx - a.x) * 0.0015;
+      a.vy += (cy - a.y) * 0.0015;
+
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const d = Math.hypot(dx, dy) || 1;
+        if (d < 220) {
+          const f = 200 / (d * d);
+          const fx = (dx / d) * f, fy = (dy / d) * f;
+          a.vx -= fx; a.vy -= fy;
+          b.vx += fx; b.vy += fy;
+        }
+      }
+    }
+
+    edges.forEach(e => {
+      const dx = e.t.x - e.s.x, dy = e.t.y - e.s.y;
+      const d = Math.hypot(dx, dy) || 1;
+      const f = (d - 65) * 0.035;
+      const fx = (dx / d) * f, fy = (dy / d) * f;
+      e.s.vx += fx; e.s.vy += fy;
+      e.t.vx -= fx; e.t.vy -= fy;
+    });
+
+    nodes.forEach(n => {
+      if (n !== draggingNode) {
+        n.vx *= 0.88; n.vy *= 0.88;
+        n.x += n.vx; n.y += n.vy;
+      }
+    });
+
+    ctx.save();
+    ctx.clearRect(0, 0, width, height);
+    ctx.translate(camX, camY);
+    ctx.scale(zoom, zoom);
+
+    const dark = isDark();
+    const edgeColor = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+    const edgeHighlight = dark ? 'rgba(74, 163, 255, 0.75)' : 'rgba(35, 131, 226, 0.75)';
+
+    edges.forEach(e => {
+      const isHigh = hoveredNode && (e.s === hoveredNode || e.t === hoveredNode);
+      ctx.beginPath();
+      ctx.strokeStyle = isHigh ? edgeHighlight : edgeColor;
+      ctx.lineWidth = isHigh ? 2 : 1;
+      ctx.moveTo(e.s.x, e.s.y);
+      ctx.lineTo(e.t.x, e.t.y);
+      ctx.stroke();
+    });
+
+    nodes.forEach(n => {
+      const isMatch = !filterText || n.title.toLowerCase().includes(filterText);
+      const isHover = hoveredNode === n;
+      const r = n.radius * (isHover ? 1.35 : 1);
+
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = n.isCur ? '#ff5f56' : isMatch ? (dark ? '#4aa3ff' : '#2383e2') : (dark ? '#555' : '#ccc');
+      ctx.fill();
+
+      if (isHover || n.isCur || nodes.length < 25 || (isMatch && filterText)) {
+        ctx.font = (isHover ? 'bold ' : '') + '12px ui-sans-serif, system-ui, sans-serif';
+        ctx.fillStyle = isHover ? (dark ? '#ffffff' : '#000000') : (dark ? '#a0a0a5' : '#4a4a50');
+        const label = (n.icon ? n.icon + ' ' : '') + n.title;
+        ctx.fillText(label, n.x + r + 6, n.y + 4);
+      }
+    });
+
+    ctx.restore();
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+}
+
+/* 2. PRESENTATION / SLIDE DECK MODE */
+function openPresentation() {
+  if (!cur) return;
+  const ov = h('div', { class: 'ov deck-ov' });
+  const rawBlocks = cur.blocks || [];
+
+  // Parse slides
+  const slides = [];
+  // Slide 0: Title Slide
+  slides.push({
+    isTitle: true,
+    title: cur.title || 'Untitled',
+    icon: getIcon(cur.icon),
+    cover: getIcon(cur.cover)
+  });
+
+  let curSlide = { title: '', blocks: [] };
+  rawBlocks.forEach(b => {
+    if (b.type === 'h1' || b.type === 'h2' || b.type === 'divider') {
+      if (curSlide.title || curSlide.blocks.length) slides.push(curSlide);
+      curSlide = { title: b.type === 'divider' ? '' : plain(b.html || ''), blocks: [] };
+    } else {
+      curSlide.blocks.push(b);
+    }
+  });
+  if (curSlide.title || curSlide.blocks.length) slides.push(curSlide);
+
+  let currentIdx = 0;
+  const counter = h('span', { style: 'font-size:13px;opacity:0.8;font-variant-numeric:tabular-nums' });
+  const contentBox = h('div', { class: 'deck-card' });
+
+  const renderSlide = () => {
+    contentBox.innerHTML = '';
+    const s = slides[currentIdx];
+    counter.textContent = `${currentIdx + 1} / ${slides.length}`;
+
+    if (s.isTitle) {
+      if (s.icon) contentBox.append(h('div', { style: 'font-size:64px;margin-bottom:12px;text-align:center' }, s.icon));
+      contentBox.append(
+        h('h1', { style: 'font-size:44px;line-height:1.2;margin:0 0 16px;text-align:center;font-weight:700' }, s.title),
+        h('div', { style: 'text-align:center;color:rgba(255,255,255,0.6);font-size:14px' },
+          'PageNest Presentation · ' + new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+        )
+      );
+    } else {
+      if (s.title) contentBox.append(h('h2', { style: 'font-size:32px;line-height:1.25;margin:0 0 20px;font-weight:700' }, s.title));
+      const bodyWrap = h('div', { style: 'display:flex;flex-direction:column;gap:12px;font-size:18px;line-height:1.6' });
+      s.blocks.forEach(b => {
+        if (b.type === 'p') bodyWrap.append(h('p', { style: 'margin:0' }, plain(b.html || '')));
+        else if (b.type === 'bullet') bodyWrap.append(h('div', { style: 'display:flex;gap:10px' }, '•', plain(b.html || '')));
+        else if (b.type === 'num') bodyWrap.append(h('div', { style: 'display:flex;gap:10px' }, '1.', plain(b.html || '')));
+        else if (b.type === 'todo') bodyWrap.append(h('div', { style: 'display:flex;gap:10px' }, b.checked ? '☑' : '☐', plain(b.html || '')));
+        else if (b.type === 'quote') bodyWrap.append(h('blockquote', { style: 'margin:0;padding-left:14px;border-left:3px solid var(--ac);font-style:italic' }, plain(b.html || '')));
+        else if (b.type === 'callout') bodyWrap.append(h('div', { style: 'padding:14px;background:rgba(255,255,255,0.06);border-radius:8px' }, (b.icon ? b.icon + ' ' : '') + plain(b.html || '')));
+        else if (b.type === 'code') bodyWrap.append(h('pre', { style: 'background:rgba(0,0,0,0.4);padding:14px;border-radius:8px;font-family:monospace;font-size:14px;overflow:auto' }, b.code || ''));
+        else if (b.type === 'image' && b.url) bodyWrap.append(h('img', { src: b.url, style: 'max-height:280px;object-fit:contain;border-radius:8px' }));
+      });
+      contentBox.append(bodyWrap);
+    }
+  };
+
+  const nextSlide = () => { if (currentIdx < slides.length - 1) { currentIdx++; renderSlide(); } };
+  const prevSlide = () => { if (currentIdx > 0) { currentIdx--; renderSlide(); } };
+
+  const bar = h('div', { class: 'deck-bar' },
+    h('button', { onclick: prevSlide, title: 'Previous slide (Left arrow)' }, '◀ Prev'),
+    counter,
+    h('button', { onclick: nextSlide, title: 'Next slide (Right arrow / Space)' }, 'Next ▶'),
+    h('span', { style: 'width:1px;height:14px;background:rgba(255,255,255,0.2)' }),
+    h('button', {
+      onclick: () => {
+        if (!document.fullscreenElement) ov.requestFullscreen().catch(() => {});
+        else document.exitFullscreen().catch(() => {});
+      }
+    }, '⛶ Fullscreen'),
+    h('button', { onclick: () => { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); ov.remove(); } }, '✕ Exit')
+  );
+
+  const onKey = ev => {
+    if (!document.body.contains(ov)) { window.removeEventListener('keydown', onKey); return; }
+    if (ev.key === 'ArrowRight' || ev.key === ' ' || ev.key === 'PageDown') { ev.preventDefault(); nextSlide(); }
+    else if (ev.key === 'ArrowLeft' || ev.key === 'PageUp' || ev.key === 'Backspace') { ev.preventDefault(); prevSlide(); }
+    else if (ev.key === 'Escape') { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); ov.remove(); }
+  };
+  window.addEventListener('keydown', onKey);
+
+  ov.append(contentBox, bar);
+  document.body.append(ov);
+  renderSlide();
+}
+
+/* 3. DAILY NOTES & JOURNALING HUB */
+function openDailyNote() {
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const titleStr = '📅 ' + dateStr;
+  const live = [...pages.values()].filter(p => !p.trashed);
+  const existing = live.find(p => p.title && (p.title.includes(dateStr) || p.title === titleStr));
+  if (existing) {
+    go(existing.id);
+    toast("Opened today's note");
+    return;
+  }
+  const blocks = [
+    { id: uid8(), type: 'h2', html: "🎯 Today's Focus & Priorities" },
+    { id: uid8(), type: 'todo', html: 'High-impact task for today', checked: false },
+    { id: uid8(), type: 'todo', html: 'Secondary task or follow-up', checked: false },
+    { id: uid8(), type: 'h2', html: '📝 Scratchpad & Quick Logs' },
+    { id: uid8(), type: 'p', html: 'Capture thoughts, meeting notes, or ideas here…' },
+    { id: uid8(), type: 'h2', html: '✨ Daily Reflection' },
+    { id: uid8(), type: 'callout', icon: '💡', html: 'What was your biggest win today? What can be refined tomorrow?' }
+  ];
+  newPage(null, titleStr, blocks, true, { icon: '📅' }).then(() => {
+    toast("Created today's daily note!");
+  });
+}
+
+/* 4. FLASHCARD & ACTIVE RECALL STUDY MODE */
+function openStudyMode() {
+  if (!cur) return;
+  const rawBlocks = cur.blocks || [];
+  const cards = [];
+
+  rawBlocks.forEach((b, idx) => {
+    if (b.type === 'toggle') {
+      const q = plain(b.html || '').trim();
+      const a = plain(b.body || '').trim();
+      if (q && a) cards.push({ q, a });
+    } else if (b.type === 'bullet' || b.type === 'todo' || b.type === 'p') {
+      const t = plain(b.html || '');
+      if (t.includes('::')) {
+        const p = t.split('::');
+        cards.push({ q: p[0].trim(), a: p.slice(1).join('::').trim() });
+      } else if (t.includes(' - ') && t.length > 8) {
+        const p = t.split(' - ');
+        cards.push({ q: p[0].trim(), a: p.slice(1).join(' - ').trim() });
+      }
+    } else if (/^h[123]$/.test(b.type)) {
+      const next = rawBlocks[idx + 1];
+      if (next && next.type === 'p' && plain(next.html || '')) {
+        cards.push({ q: plain(b.html || ''), a: plain(next.html || '') });
+      }
+    }
+  });
+
+  if (!cards.length) {
+    cards.push(
+      { q: 'How do you create a flashcard in PageNest?', a: 'Use a Toggle list, or write a bullet with "Question :: Answer"' },
+      { q: (cur.title || 'This page') + ' - Core Topic', a: 'Add more toggle blocks or headings with descriptions to study your notes!' }
+    );
+  }
+
+  const ov = h('div', { class: 'ov study-ov', onmousedown: e => { if (e.target === ov) ov.remove(); } });
+  const box = h('div', { class: 'study-box' });
+  let cardIdx = 0;
+  let flipped = false;
+  let score = 0;
+
+  const header = h('div', { style: 'width:100%;display:flex;justify-content:space-between;align-items:center' },
+    h('div', { style: 'display:flex;align-items:center;gap:8px' },
+      ico('cards', 18),
+      h('b', {}, 'Active Recall Flashcards')
+    ),
+    h('button', { class: 'btn sm', onclick: () => ov.remove() }, '✕ Exit')
+  );
+
+  const progBar = h('div', { class: 'study-prog' }, h('div', { class: 'study-bar', style: 'width:0%' }));
+  const cardWrap = h('div', { class: 'study-card-wrap' });
+  const card = h('div', { class: 'study-card' });
+  const front = h('div', { class: 'study-front' });
+  const back = h('div', { class: 'study-back' });
+  card.append(front, back);
+  cardWrap.append(card);
+
+  const actions = h('div', { class: 'study-btns' });
+
+  const flip = () => {
+    flipped = !flipped;
+    card.classList.toggle('flipped', flipped);
+    renderActions();
+  };
+  cardWrap.onclick = flip;
+
+  const renderCard = () => {
+    flipped = false;
+    card.classList.remove('flipped');
+    const c = cards[cardIdx];
+    progBar.firstChild.style.width = ((cardIdx / cards.length) * 100) + '%';
+
+    front.innerHTML = '';
+    front.append(
+      h('div', { class: 'muted sm', style: 'margin-bottom:8px' }, `Question ${cardIdx + 1} of ${cards.length}`),
+      h('div', { style: 'font-size:22px;font-weight:600;line-height:1.4' }, c.q),
+      h('div', { class: 'muted sm', style: 'margin-top:16px' }, 'Click or Space to flip')
+    );
+
+    back.innerHTML = '';
+    back.append(
+      h('div', { class: 'muted sm', style: 'margin-bottom:8px' }, 'Answer'),
+      h('div', { style: 'font-size:20px;line-height:1.5' }, c.a)
+    );
+
+    renderActions();
+  };
+
+  const nextCard = rating => {
+    if (rating >= 3) score++;
+    if (cardIdx < cards.length - 1) {
+      cardIdx++;
+      renderCard();
+    } else {
+      // Completed Deck
+      box.innerHTML = '';
+      progBar.firstChild.style.width = '100%';
+      box.append(
+        h('div', { style: 'font-size:48px;margin-bottom:8px' }, '🎉'),
+        h('h2', { style: 'margin:0 0 8px' }, 'Deck Completed!'),
+        h('div', { class: 'muted sm', style: 'margin-bottom:20px' }, `You studied ${cards.length} cards and remembered ${score}.`),
+        h('div', { style: 'display:flex;gap:10px' },
+          h('button', { class: 'btn pri', onclick: () => { cardIdx = 0; score = 0; box.innerHTML = ''; box.append(header, progBar, cardWrap, actions); renderCard(); } }, 'Study Again'),
+          h('button', { class: 'btn', onclick: () => ov.remove() }, 'Done')
+        )
+      );
+    }
+  };
+
+  const renderActions = () => {
+    actions.innerHTML = '';
+    if (!flipped) {
+      actions.append(h('button', { class: 'btn pri', style: 'min-width:140px', onclick: flip }, 'Show Answer (Space)'));
+    } else {
+      actions.append(
+        h('button', { class: 'btn danger sm', onclick: () => nextCard(1) }, '🔴 Again'),
+        h('button', { class: 'btn sm', onclick: () => nextCard(2) }, '🟠 Hard'),
+        h('button', { class: 'btn sm', onclick: () => nextCard(3) }, '🟢 Good'),
+        h('button', { class: 'btn pri sm', onclick: () => nextCard(4) }, '🔵 Easy')
+      );
+    }
+  };
+
+  const onKey = ev => {
+    if (!document.body.contains(ov)) { window.removeEventListener('keydown', onKey); return; }
+    if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); if (!flipped) flip(); else nextCard(3); }
+    else if (flipped && (ev.key === '1' || ev.key === '2' || ev.key === '3' || ev.key === '4')) {
+      ev.preventDefault(); nextCard(+ev.key);
+    } else if (ev.key === 'Escape') ov.remove();
+  };
+  window.addEventListener('keydown', onKey);
+
+  box.append(header, progBar, cardWrap, actions);
+  ov.append(box);
+  document.body.append(ov);
+  renderCard();
+}
+
+/* 5. INTERACTIVE CHARTS BLOCK */
+function chartEl(b, edit) {
+  b.chartType = b.chartType || 'bar';
+  b.title = b.title || 'Project Overview';
+  b.labels = b.labels || ['Q1', 'Q2', 'Q3', 'Q4'];
+  b.values = (b.values || [25, 45, 32, 68]).map(v => Number(v) || 0);
+
+  const wrap = h('div', { class: 'chart-block' });
+  const typeBtns = ['bar', 'line', 'pie', 'donut'].map(t => h('button', {
+    class: 'btn sm' + (b.chartType === t ? ' pri' : ''),
+    style: 'text-transform:capitalize',
+    onclick: () => { b.chartType = t; touch(); renderBlocks(); }
+  }, t));
+
+  const head = h('div', { class: 'chart-top' },
+    h('div', { style: 'font-weight:600;font-size:14.5px' }, b.title),
+    edit ? h('div', { style: 'display:flex;gap:4px' }, ...typeBtns) : null
+  );
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'chart-svg');
+  svg.setAttribute('viewBox', '0 0 500 240');
+
+  const colors = ['#4aa3ff', '#36d399', '#f87272', '#fbbd23', '#a78bfa', '#f472b6', '#38bdf8'];
+  const maxVal = Math.max(...b.values, 1) * 1.15;
+  const W = 500, H = 240, padL = 40, padR = 20, padT = 30, padB = 40;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  if (b.chartType === 'bar') {
+    const barW = Math.max(12, Math.min(48, (plotW / b.labels.length) * 0.6));
+    const step = plotW / b.labels.length;
+    b.labels.forEach((lbl, i) => {
+      const val = b.values[i] || 0;
+      const hVal = (val / maxVal) * plotH;
+      const x = padL + i * step + (step - barW) / 2;
+      const y = H - padB - hVal;
+      const color = colors[i % colors.length];
+
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', x); rect.setAttribute('y', y);
+      rect.setAttribute('width', barW); rect.setAttribute('height', hVal);
+      rect.setAttribute('rx', 4); rect.setAttribute('fill', color);
+      svg.append(rect);
+
+      const txtVal = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      txtVal.setAttribute('x', x + barW / 2); txtVal.setAttribute('y', y - 6);
+      txtVal.setAttribute('text-anchor', 'middle');
+      txtVal.setAttribute('fill', 'var(--tx2)'); txtVal.setAttribute('font-size', '11');
+      txtVal.textContent = val;
+      svg.append(txtVal);
+
+      const txtX = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      txtX.setAttribute('x', x + barW / 2); txtX.setAttribute('y', H - padB + 18);
+      txtX.setAttribute('text-anchor', 'middle');
+      txtX.setAttribute('fill', 'var(--tx3)'); txtX.setAttribute('font-size', '11');
+      txtX.textContent = lbl;
+      svg.append(txtX);
+    });
+  } else if (b.chartType === 'line') {
+    const step = plotW / Math.max(1, b.labels.length - 1);
+    const pts = b.labels.map((lbl, i) => ({
+      x: padL + i * step,
+      y: H - padB - ((b.values[i] || 0) / maxVal) * plotH,
+      val: b.values[i] || 0,
+      lbl
+    }));
+
+    const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    let dArea = `M ${pts[0].x} ${H - padB}`;
+    pts.forEach(p => { dArea += ` L ${p.x} ${p.y}`; });
+    dArea += ` L ${pts[pts.length - 1].x} ${H - padB} Z`;
+    area.setAttribute('d', dArea);
+    area.setAttribute('fill', 'var(--acbg)');
+    svg.append(area);
+
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    let dLine = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 1; i < pts.length; i++) dLine += ` L ${pts[i].x} ${pts[i].y}`;
+    line.setAttribute('d', dLine);
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', 'var(--ac)');
+    line.setAttribute('stroke-width', '3');
+    line.setAttribute('stroke-linecap', 'round');
+    svg.append(line);
+
+    pts.forEach(p => {
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y); dot.setAttribute('r', '4');
+      dot.setAttribute('fill', 'var(--bg)');
+      dot.setAttribute('stroke', 'var(--ac)');
+      dot.setAttribute('stroke-width', '2.5');
+      svg.append(dot);
+
+      const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      txt.setAttribute('x', p.x); txt.setAttribute('y', p.y - 8);
+      txt.setAttribute('text-anchor', 'middle');
+      txt.setAttribute('fill', 'var(--tx)'); txt.setAttribute('font-size', '11');
+      txt.textContent = p.val;
+      svg.append(txt);
+
+      const txtX = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      txtX.setAttribute('x', p.x); txtX.setAttribute('y', H - padB + 18);
+      txtX.setAttribute('text-anchor', 'middle');
+      txtX.setAttribute('fill', 'var(--tx3)'); txtX.setAttribute('font-size', '11');
+      txtX.textContent = p.lbl;
+      svg.append(txtX);
+    });
+  } else {
+    const isDonut = b.chartType === 'donut';
+    const total = b.values.reduce((s, v) => s + v, 0) || 1;
+    const cx = 170, cy = H / 2, r = 85;
+    let accAngle = -Math.PI / 2;
+
+    b.labels.forEach((lbl, i) => {
+      const val = b.values[i] || 0;
+      const sliceAngle = (val / total) * Math.PI * 2;
+      const x1 = cx + r * Math.cos(accAngle);
+      const y1 = cy + r * Math.sin(accAngle);
+      const x2 = cx + r * Math.cos(accAngle + sliceAngle);
+      const y2 = cy + r * Math.sin(accAngle + sliceAngle);
+      const largeArc = sliceAngle > Math.PI ? 1 : 0;
+      const color = colors[i % colors.length];
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`);
+      path.setAttribute('fill', color);
+      svg.append(path);
+
+      const legY = 36 + i * 22;
+      if (legY < H - 15) {
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        dot.setAttribute('x', 310); dot.setAttribute('y', legY - 10);
+        dot.setAttribute('width', 12); dot.setAttribute('height', 12);
+        dot.setAttribute('rx', 3); dot.setAttribute('fill', color);
+        svg.append(dot);
+
+        const legText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        legText.setAttribute('x', 330); legText.setAttribute('y', legY);
+        legText.setAttribute('fill', 'var(--tx)'); legText.setAttribute('font-size', '12');
+        legText.textContent = `${lbl} (${Math.round((val / total) * 100)}%)`;
+        svg.append(legText);
+      }
+      accAngle += sliceAngle;
+    });
+
+    if (isDonut) {
+      const hole = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      hole.setAttribute('cx', cx); hole.setAttribute('cy', cy); hole.setAttribute('r', '48');
+      hole.setAttribute('fill', 'var(--bg2)');
+      svg.append(hole);
+    }
+  }
+
+  wrap.append(head, svg);
+
+  if (edit) {
+    const tbl = h('div', { class: 'chart-table' });
+    b.labels.forEach((lbl, i) => {
+      const row = h('div', { style: 'display:flex;gap:4px;align-items:center' });
+      const lInp = h('input', { value: lbl, style: 'width:65px;padding:3px 6px;font-size:12px' });
+      const vInp = h('input', { type: 'number', value: b.values[i] || 0, style: 'width:55px;padding:3px 6px;font-size:12px' });
+      lInp.oninput = () => { b.labels[i] = lInp.value; touch(); renderBlocks(); };
+      vInp.oninput = () => { b.values[i] = Number(vInp.value) || 0; touch(); renderBlocks(); };
+      row.append(lInp, vInp);
+      tbl.append(row);
+    });
+    const addBtn = h('button', {
+      class: 'btn sm',
+      onclick: () => {
+        b.labels.push('Item ' + (b.labels.length + 1));
+        b.values.push(Math.floor(Math.random() * 50) + 15);
+        touch(); renderBlocks();
+      }
+    }, '+ Item');
+    const remBtn = h('button', {
+      class: 'btn sm',
+      onclick: () => {
+        if (b.labels.length > 1) {
+          b.labels.pop(); b.values.pop();
+          touch(); renderBlocks();
+        }
+      }
+    }, '− Item');
+    wrap.append(tbl, h('div', { style: 'display:flex;gap:6px;margin-top:8px' }, addBtn, remBtn));
+  }
+
+  return wrap;
+}
+
+/* 6. ZEN FOCUS DOCK & AMBIENT ENGINE */
+let zenDockEl = null;
+let pomoTimer = null;
+let pomoSeconds = 25 * 60;
+let pomoRunning = false;
+let ambientCtx = null;
+let ambientSource = null;
+let ambientGain = null;
+
+function playChime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15);
+    g.gain.setValueAtTime(0.3, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+    osc.start(); osc.stop(ctx.currentTime + 1.2);
+  } catch {}
+}
+
+function startAmbientSound(type, vol = 0.25) {
+  stopAmbientSound();
+  if (type === 'none') return;
+  try {
+    ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const bufferSize = ambientCtx.sampleRate * 3;
+    const buffer = ambientCtx.createBuffer(1, bufferSize, ambientCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    let b0 = 0, b1 = 0, b2 = 0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      b0 = 0.99886 * b0 + white * 0.0555179;
+      b1 = 0.99332 * b1 + white * 0.0750759;
+      b2 = 0.96900 * b2 + white * 0.1538520;
+      data[i] = (b0 + b1 + b2) * 0.12;
+    }
+
+    ambientSource = ambientCtx.createBufferSource();
+    ambientSource.buffer = buffer;
+    ambientSource.loop = true;
+
+    ambientGain = ambientCtx.createGain();
+    ambientGain.gain.value = vol;
+
+    if (type === 'rain') {
+      const filter = ambientCtx.createBiquadFilter();
+      filter.type = 'lowpass'; filter.frequency.value = 1000;
+      ambientSource.connect(filter); filter.connect(ambientGain);
+    } else if (type === 'ocean') {
+      const filter = ambientCtx.createBiquadFilter();
+      filter.type = 'bandpass'; filter.frequency.value = 450;
+      ambientSource.connect(filter); filter.connect(ambientGain);
+    } else {
+      ambientSource.connect(ambientGain);
+    }
+
+    ambientGain.connect(ambientCtx.destination);
+    ambientSource.start();
+  } catch (err) {
+    console.warn('Audio synthesis unavailable', err);
+  }
+}
+
+function stopAmbientSound() {
+  if (ambientSource) { try { ambientSource.stop(); } catch {} ambientSource = null; }
+  if (ambientCtx) { try { ambientCtx.close(); } catch {} ambientCtx = null; }
+}
+
+function setupZenDock() {
+  if (zenDockEl) { zenDockEl.remove(); zenDockEl = null; }
+  if (!document.documentElement.classList.contains('focus')) {
+    stopAmbientSound();
+    clearInterval(pomoTimer);
+    pomoRunning = false;
+    return;
+  }
+
+  zenDockEl = h('div', { id: 'zen-dock' });
+  const timeDisplay = h('span', { class: 'zen-pomo' }, '25:00');
+  const updateTimer = () => {
+    const m = Math.floor(pomoSeconds / 60);
+    const s = pomoSeconds % 60;
+    timeDisplay.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  };
+
+  const pomoToggle = h('button', {
+    class: 'btn sm',
+    title: 'Start/Pause Pomodoro timer',
+    onclick: () => {
+      pomoRunning = !pomoRunning;
+      pomoToggle.textContent = pomoRunning ? '⏸' : '▶';
+      if (pomoRunning) {
+        clearInterval(pomoTimer);
+        pomoTimer = setInterval(() => {
+          if (pomoSeconds > 0) {
+            pomoSeconds--;
+            updateTimer();
+          } else {
+            clearInterval(pomoTimer);
+            pomoRunning = false;
+            pomoToggle.textContent = '▶';
+            playChime();
+            toast('Pomodoro session complete! Take a break.');
+          }
+        }, 1000);
+      } else {
+        clearInterval(pomoTimer);
+      }
+    }
+  }, '▶');
+
+  const pomoReset = h('button', {
+    class: 'btn sm',
+    title: 'Reset to 25m',
+    onclick: () => {
+      pomoSeconds = 25 * 60;
+      pomoRunning = false;
+      pomoToggle.textContent = '▶';
+      clearInterval(pomoTimer);
+      updateTimer();
+    }
+  }, '↺');
+
+  const soundSel = h('select', {
+    style: 'padding:2px 8px;font-size:12px;border-radius:6px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)',
+    onchange: e => startAmbientSound(e.target.value)
+  },
+    h('option', { value: 'none' }, '🔇 No sound'),
+    h('option', { value: 'rain' }, '🌧️ Rain'),
+    h('option', { value: 'ocean' }, '🌊 Ocean waves'),
+    h('option', { value: 'noise' }, '📻 White noise')
+  );
+
+  const exitBtn = h('button', {
+    class: 'btn sm',
+    onclick: () => toggleFocus(false)
+  }, 'Exit (Esc)');
+
+  zenDockEl.append(
+    ico('clock', 14),
+    timeDisplay,
+    pomoToggle,
+    pomoReset,
+    h('span', { style: 'width:1px;height:14px;background:var(--bd);margin:0 4px' }),
+    ico('headphones', 14),
+    soundSel,
+    h('span', { style: 'width:1px;height:14px;background:var(--bd);margin:0 4px' }),
+    exitBtn
+  );
+  document.body.append(zenDockEl);
+}
+
+/* 7. PRIVATE VAULT / AES-GCM ENCRYPTION */
+async function deriveVaultKey(password, salt) {
+  const enc = new TextEncoder();
+  const baseKey = await window.crypto.subtle.importKey(
+    'raw',
+    enc.encode(password),
+    'PBKDF2',
+    false,
+    ['deriveKey']
+  );
+  return window.crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
+
+function bufToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+function base64ToBuf(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function openEncryptModal() {
+  if (!cur || !canEdit()) return;
+  if (cur.encrypted) {
+    if (confirm('Remove password protection and decrypt this page permanently?')) {
+      cur.encrypted = false;
+      cur.cipher = null;
+      cur.salt = null;
+      cur.iv = null;
+      cur._unlocked = true;
+      touch();
+      renderPage();
+      toast('Page decrypted and unlocked');
+    }
+    return;
+  }
+
+  const pw = prompt('Enter a secure passphrase to encrypt this page:');
+  if (!pw || pw.length < 4) return toast('Passphrase must be at least 4 characters');
+
+  (async () => {
+    try {
+      const salt = window.crypto.getRandomValues(new Uint8Array(16));
+      const iv = window.crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveVaultKey(pw, salt);
+      const plain = new TextEncoder().encode(JSON.stringify(cur.blocks || []));
+      const cipher = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plain);
+
+      cur.encrypted = true;
+      cur.cipher = bufToBase64(cipher);
+      cur.salt = bufToBase64(salt);
+      cur.iv = bufToBase64(iv);
+      cur._unlocked = true;
+      touch();
+      renderPage();
+      toast('Page encrypted with AES-GCM 256');
+    } catch (e) {
+      toast('Encryption failed: ' + e.message);
+    }
+  })();
+}
+
+function vaultUnlockEl() {
+  const card = h('div', { class: 'vault-card' },
+    h('div', { style: 'font-size:42px;margin-bottom:4px' }, '🔒'),
+    h('h3', { style: 'margin:0' }, 'This Page is Encrypted'),
+    h('div', { class: 'muted sm', style: 'max-width:320px' }, 'Protected with client-side AES-GCM 256-bit encryption. Enter your passphrase to view and edit.')
+  );
+
+  const inp = h('input', { type: 'password', class: 'vault-inp', placeholder: 'Enter passphrase…', autofocus: true });
+  const unlockBtn = h('button', {
+    class: 'btn pri',
+    onclick: async () => {
+      const pw = inp.value;
+      if (!pw) return;
+      try {
+        const salt = new Uint8Array(base64ToBuf(cur.salt));
+        const iv = new Uint8Array(base64ToBuf(cur.iv));
+        const cipher = base64ToBuf(cur.cipher);
+        const key = await deriveVaultKey(pw, salt);
+        const decrypted = await window.crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, cipher);
+        const text = new TextDecoder().decode(decrypted);
+        cur.blocks = JSON.parse(text);
+        cur._unlocked = true;
+        renderBlocks();
+        toast('Page unlocked');
+      } catch (e) {
+        toast('Incorrect passphrase');
+        inp.select();
+      }
+    }
+  }, 'Unlock Note');
+
+  inp.onkeydown = e => { if (e.key === 'Enter') unlockBtn.click(); };
+  card.append(inp, unlockBtn);
+  return card;
+}
+
+/* 8. VOICE DICTATION & MEMO BLOCK */
+function voiceEl(b, edit) {
+  const wrap = h('div', { class: 'voice-block' });
+  const wave = h('div', { class: 'voice-wave' },
+    h('div', { class: 'vbar' }),
+    h('div', { class: 'vbar' }),
+    h('div', { class: 'vbar' }),
+    h('div', { class: 'vbar' }),
+    h('div', { class: 'vbar' })
+  );
+
+  const stat = h('div', { style: 'flex:1;min-width:0' },
+    h('div', { style: 'font-weight:500;font-size:13.5px' }, b.transcript ? 'Voice Dictation' : 'Voice Memo'),
+    h('div', { class: 'muted sm', style: 'margin-top:2px;font-style:italic' }, b.transcript || 'Click Record to dictate speech into text…')
+  );
+
+  let rec = null;
+  let listening = false;
+
+  const btn = h('button', {
+    class: 'btn sm',
+    onclick: () => {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) return toast('Speech recognition not supported in this browser');
+
+      if (listening) {
+        rec && rec.stop();
+        return;
+      }
+
+      rec = new SR();
+      rec.continuous = true;
+      rec.interimResults = true;
+      rec.lang = navigator.language || 'en-US';
+
+      rec.onstart = () => {
+        listening = true;
+        wave.classList.add('active');
+        btn.textContent = '⏹ Stop';
+        btn.classList.add('danger');
+        toast('Listening… speak into your microphone');
+      };
+
+      rec.onresult = ev => {
+        let text = '';
+        for (let i = 0; i < ev.results.length; i++) {
+          text += ev.results[i][0].transcript;
+        }
+        b.transcript = text;
+        stat.children[1].textContent = text;
+        touch();
+      };
+
+      rec.onerror = e => {
+        console.warn('Speech error', e);
+        toast('Speech recognition: ' + (e.error || 'error'));
+      };
+
+      rec.onend = () => {
+        listening = false;
+        wave.classList.remove('active');
+        btn.textContent = '🎙️ Record';
+        btn.classList.remove('danger');
+      };
+
+      try {
+        rec.start();
+      } catch (err) {
+        toast('Could not access microphone');
+      }
+    }
+  }, '🎙️ Record');
+
+  const insertBtn = h('button', {
+    class: 'btn sm',
+    title: 'Insert transcript as a paragraph block',
+    onclick: () => {
+      if (!b.transcript) return toast('No voice transcript yet');
+      addBlock(idx(b) + 1, 'p', true, { html: esc(b.transcript) });
+      toast('Transcript inserted as block');
+    }
+  }, 'Insert as text');
+
+  wrap.append(wave, stat, btn, b.transcript ? insertBtn : null);
+  return wrap;
+}
+
 
 /* ---- Notion-style extras ---- */
 const COL = ['gray', 'brown', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red'];
@@ -3273,6 +4637,8 @@ function toMd() {
       case 'image': out += `![${b.name || ''}](${b.url || ''})\n\n`; break;
       case 'file': out += `[${b.name || 'file'}](${b.url || ''})\n\n`; break;
       case 'embed': out += (b.url || '') + '\n\n'; break;
+      case 'chart': out += '```chart\n' + JSON.stringify({ type: b.chartType || 'bar', title: b.title || '', labels: b.labels || [], values: b.values || [] }, null, 2) + '\n```\n\n'; break;
+      case 'voice': out += '🎙️ **Voice note**: ' + (t || inl(b.transcript) || '') + '\n\n'; break;
       case 'table': {
         const rows = (b.rows || []).map(r => '| ' + r.c.map(c => plain(c).replace(/\|/g, '\\|')).join(' | ') + ' |');
         if (rows.length) {
@@ -3471,14 +4837,21 @@ function bodyFor(b, n, edit) {
     case 'toggle': {
       const wrap = h('div', {});
       wrap.append(
-        h('div', { class: 'tgh' },
-          h('button', { class: 'car', style: 'margin-top:4px', onclick: () => { b.open = !b.open; if (edit) touch(); renderBlocks(); } }, b.open ? '▾' : '▸'),
+        h('div', { class: 'tgh', onclick: e => {
+          if (e.target.closest('.ed')) return;
+          b.open = !b.open;
+          if (edit) touch();
+          renderBlocks();
+        } },
+          h('button', { class: 'car', style: 'margin-top:3px', onclick: e => { e.stopPropagation(); b.open = !b.open; if (edit) touch(); renderBlocks(); } }, b.open ? '▾' : '▸'),
           editable(b, 'html', 'Toggle')
         )
       );
       if (b.open) wrap.append(h('div', { class: 'tgb' }, editable(b, 'body', 'Empty toggle content…')));
       return wrap;
     }
+    case 'chart': return chartEl(b, edit);
+    case 'voice': return voiceEl(b, edit);
     case 'callout': {
       const ic = getIcon(b.icon, 'info');
       return h('div', { class: 'callout' },
@@ -3781,7 +5154,7 @@ function embedEl(b, edit) {
   const u = safeUrl(b.url);
   if (!u) {
     if (!edit) return h('div', { class: 'ph' }, 'Empty embed');
-    const inp = h('input', { placeholder: 'Paste a YouTube / Vimeo / link and press Enter' });
+    const inp = h('input', { placeholder: 'Paste YouTube, Spotify, CodePen, or web link and press Enter…' });
     inp.onkeydown = ev => {
       if (ev.key === 'Enter' && safeUrl(inp.value)) {
         b.url = inp.value.trim();
@@ -3794,12 +5167,44 @@ function embedEl(b, edit) {
   let src = '';
   const yt = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
   const vm = u.match(/vimeo\.com\/(\d+)/);
+  const sp = u.match(/open\.spotify\.com\/(track|album|playlist|episode)\/([a-zA-Z0-9]+)/);
+  const cp = u.match(/codepen\.io\/([^/]+)\/pen\/([^/]+)/);
+
   if (yt) src = 'https://www.youtube.com/embed/' + yt[1];
   else if (vm) src = 'https://player.vimeo.com/video/' + vm[1];
-  const del = edit ? h('button', { class: 'sm muted', onclick: () => delBlock(idx(b)) }, 'remove embed') : null;
-  if (src) return h('div', {}, h('div', { class: 'emb' }, h('iframe', { src, allowfullscreen: true, loading: 'lazy' })), del);
+  else if (sp) src = 'https://open.spotify.com/embed/' + sp[1] + '/' + sp[2];
+  else if (cp) src = 'https://codepen.io/' + cp[1] + '/embed/' + cp[2] + '?default-tab=result';
+
+  const del = edit ? h('button', { class: 'sm muted', style: 'margin-top:4px', onclick: () => delBlock(idx(b)) }, 'Remove embed') : null;
+  if (src) {
+    const isSpotify = !!sp;
+    return h('div', {},
+      h('div', { class: 'emb' + (isSpotify ? ' spotify' : '') },
+        h('iframe', { src, allowfullscreen: true, loading: 'lazy' })
+      ),
+      del
+    );
+  }
   if (/\.pdf(\?|$)/i.test(u)) return h('div', {}, h('div', { class: 'pv' }, h('iframe', { class: 'pdf', src: u })), del);
-  return h('div', {}, h('a', { class: 'bm', href: u, target: '_blank', rel: 'noopener noreferrer' }, u), del);
+
+  try {
+    const urlObj = new URL(u);
+    const domain = urlObj.hostname.replace(/^www\./, '');
+    const faviconUrl = 'https://www.google.com/s2/favicons?domain=' + domain + '&sz=64';
+    const title = b.title || domain;
+    const card = h('a', { class: 'bm-card', href: u, target: '_blank', rel: 'noopener noreferrer' },
+      h('div', { class: 'bm-body' },
+        h('div', { class: 'bm-title' }, title),
+        h('div', { class: 'bm-host' },
+          h('img', { class: 'bm-icon', src: faviconUrl, onerror: e => e.target.style.display = 'none' }),
+          domain
+        )
+      )
+    );
+    return h('div', {}, card, del);
+  } catch {
+    return h('div', {}, h('a', { class: 'bm', href: u, target: '_blank', rel: 'noopener noreferrer' }, u), del);
+  }
 }
 
 /* ---------- TABLES ---------- */
@@ -3940,7 +5345,9 @@ const CMDS = [
   { n: 'Table', t: 'table', i: 'sheet', k: 'grid rows columns csv sheet', desc: 'Add rows and columns or import CSV.' },
   { n: 'Image', t: 'image', i: 'image', k: 'picture photo png jpg webp', desc: 'Upload or link an image.' },
   { n: 'File', t: 'file', i: 'clip', k: 'pdf word excel document', desc: 'Upload PDF, Word, Excel, or media.' },
-  { n: 'Embed link', t: 'embed', i: 'link', k: 'youtube vimeo video bookmark', desc: 'Embed YouTube or web links.' },
+  { n: 'Embed link', t: 'embed', i: 'link', k: 'youtube spotify vimeo video bookmark', desc: 'Embed YouTube, Spotify, or bookmark web links.' },
+  { n: 'Chart', t: 'chart', i: 'chart', k: 'graph bar line pie donut visualization metric', desc: 'Interactive Bar, Line, Pie, or Donut chart.' },
+  { n: 'Voice note', t: 'voice', i: 'mic', k: 'speech dictation audio microphone transcribe record', desc: 'Dictate speech to text with live waveform.' },
   { n: 'Sub-page', t: 'page', i: 'doc', k: 'page child document nest', desc: 'Embed a sub-page inside this one.' }
 ];
 
@@ -3987,6 +5394,8 @@ function applyCmd(b, t) {
   if (t === 'table') { b.rows = defRows(); b.header = true; }
   if (t === 'callout') b.icon = 'info';
   if (t === 'todo') b.checked = false;
+  if (t === 'chart') { b.chartType = 'bar'; b.title = 'Project Metrics'; b.labels = ['Q1', 'Q2', 'Q3', 'Q4']; b.values = [28, 45, 36, 62]; }
+  if (t === 'voice') { b.transcript = ''; }
   if (!TEXTISH.has(t) && idx(b) === cur.blocks.length - 1) cur.blocks.push({ id: uid8(), type: 'p', html: '' });
   touch();
   if (t === 'page') {
@@ -4019,6 +5428,7 @@ function shortcuts(b, e) {
     [/^[-*]\s$/, 'bullet'],
     [/^1[.)]\s$/, 'num'],
     [/^\[\]\s$/, 'todo'],
+    [/^>>\s$/, 'toggle'],
     [/^>\s$/, 'quote']
   ];
   for (const [re, ty] of map) {
