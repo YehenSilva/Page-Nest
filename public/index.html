@@ -179,7 +179,7 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid transparent;
   background-clip: padding-box;
 }
-::-webkit-scrollbar-corner { background: transparent !important; }
+::-webkit-scrollbar-corner { display: none !important; background: transparent !important; width: 0 !important; height: 0 !important; }
 
 /* Minimalist Card & Auth */
 .card {
@@ -463,11 +463,27 @@ a.cr:hover { background: var(--hover); color: var(--tx); }
   z-index: 3;
 }
 .picon {
-  font-size: 72px;
-  line-height: 1;
+  font-size: 64px;
+  line-height: 1.1;
   cursor: pointer;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   user-select: none;
+  border-radius: 8px;
+  transition: transform 0.12s ease;
+  min-height: 68px;
+  min-width: 68px;
+}
+.picon:hover { transform: scale(1.08); }
+.picon.is-svg {
+  width: 64px;
+  height: 64px;
+  color: var(--tx);
+}
+.picon.is-svg svg {
+  width: 52px;
+  height: 52px;
 }
 
 .ptitle {
@@ -865,7 +881,7 @@ table.tbl th { background: var(--bg2); font-weight: 600; }
 .si { width: 20px; text-align: center; color: var(--tx2); flex: none; font-size: 14px; }
 .pi-desc { font-size: 11.5px; color: var(--tx2); margin-top: 1px; }
 
-/* Categorized Emoji Grid */
+/* Categorized Emoji Grid & Notion-Style Emoji Picker */
 .egrid {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -875,6 +891,106 @@ table.tbl th { background: var(--bg2); font-weight: 600; }
 }
 .egrid button { font-size: 20px; padding: 4px; border-radius: 4px; }
 .egrid button:hover { background: var(--hover); }
+
+.pop.epop {
+  width: 352px;
+  max-width: 95vw;
+  padding: 10px 12px 8px;
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--bd);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 200;
+  box-sizing: border-box;
+}
+.ep-top {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ep-search {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid var(--bd);
+  background: var(--bg2);
+  color: var(--tx);
+  outline: none;
+  font-family: inherit;
+}
+.ep-search:focus {
+  border-color: var(--ac);
+  box-shadow: 0 0 0 2px var(--acbg);
+}
+.ep-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 3px;
+  scrollbar-width: none;
+}
+.ep-tabs::-webkit-scrollbar { display: none; }
+.ep-tab {
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: var(--tx2);
+  white-space: nowrap;
+  background: none;
+  cursor: pointer;
+  border: 0;
+  font-weight: 500;
+  transition: background 0.1s;
+}
+.ep-tab:hover {
+  background: var(--hover);
+  color: var(--tx);
+}
+.ep-tab.on {
+  background: var(--hover-active);
+  color: var(--tx);
+  font-weight: 600;
+}
+.ep-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  max-height: 220px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 2px;
+  box-sizing: border-box;
+}
+.ep-btn {
+  font-size: 22px;
+  line-height: 1;
+  height: 36px;
+  width: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  transition: transform 0.08s ease, background 0.08s ease;
+  user-select: none;
+}
+.ep-btn:hover {
+  background: var(--hover);
+  transform: scale(1.2);
+}
+.ep-btn:active {
+  transform: scale(0.95);
+}
+.ep-foot {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
 
 /* Selection Floating Format Bar */
 .fmt {
@@ -916,10 +1032,26 @@ table.tbl th { background: var(--bg2); font-weight: 600; }
   padding: 22px 24px;
   max-height: 82vh;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   box-sizing: border-box;
   overscroll-behavior: contain;
   border: 1px solid var(--bd);
+  scrollbar-width: thin;
+}
+.modal::-webkit-scrollbar {
+  width: 6px;
+  height: 0px !important;
+}
+.modal::-webkit-scrollbar:horizontal {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.modal::-webkit-scrollbar-corner {
+  display: none !important;
+  background: transparent !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 .mh {
   display: flex;
@@ -1175,7 +1307,7 @@ h1,.ed h1{letter-spacing:-0.025em;font-weight:700}
 .pop:has(.pi-desc){width:280px}
 .cmd-list .row{justify-content:flex-start}
 /* ---- Settings ---- */
-.set{width:100%;max-width:100%;box-sizing:border-box;overflow-x:hidden}
+.set{width:100%;max-width:100%;box-sizing:border-box;overflow-x:hidden;padding-bottom:14px}
 .sg{font-size:12px;font-weight:600;color:var(--tx3);margin:18px 0 2px}.sg:first-child{margin-top:0}
 .srow{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--bd-subtle);box-sizing:border-box;width:100%;max-width:100%}
 .sl{font-size:13.5px}.sd{font-size:12px;color:var(--tx3);margin-top:1px}
@@ -1534,10 +1666,10 @@ function h(tag, props = {}, ...kids) {
     if (k === 'class') e.className = v;
     else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
     else if (v === true) e.setAttribute(k, '');
-    else if (v !== false && v != null && v !== 'null') e.setAttribute(k, v);
+    else if (v !== false && v != null && v !== 'null' && v !== 'undefined') e.setAttribute(k, v);
   }
-  for (const c of kids.flat()) {
-    if (c != null && c !== false && c !== 'null' && c !== 'undefined') {
+  for (const c of kids.flat(Infinity)) {
+    if (c != null && c !== false && c !== '' && c !== 'null' && c !== 'undefined') {
       e.append(c.nodeType ? c : document.createTextNode(c));
     }
   }
@@ -1545,8 +1677,9 @@ function h(tag, props = {}, ...kids) {
 }
 
 function appendKids(parent, ...kids) {
-  for (const c of kids.flat()) {
-    if (c != null && c !== false && c !== 'null' && c !== 'undefined') {
+  if (!parent) return;
+  for (const c of kids.flat(Infinity)) {
+    if (c != null && c !== false && c !== '' && c !== 'null' && c !== 'undefined') {
       parent.append(c.nodeType ? c : document.createTextNode(c));
     }
   }
@@ -1554,6 +1687,7 @@ function appendKids(parent, ...kids) {
 
 
 const _IC={search:'<circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/>',plus:'<path d="M8 3v10M3 8h10"/>',
+smile:'<circle cx="8" cy="8" r="6"/><path d="M5.5 6v.5M10.5 6v.5M5.5 9.5a3 3 0 0 0 5 0"/>',
 moon:'<path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/>',sun:'<circle cx="8" cy="8" r="2.8"/><path d="M8 1.5v1.4M8 13.1v1.4M1.5 8h1.4M13.1 8h1.4M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/>',
 link:'<path d="M6.5 9.5a3 3 0 0 0 4.2 0l2-2a3 3 0 0 0-4.2-4.2l-.8.8M9.5 6.5a3 3 0 0 0-4.2 0l-2 2a3 3 0 0 0 4.2 4.2l.8-.8"/>',
 trash:'<path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.5 8.5h6l.5-8.5"/>',image:'<rect x="2" y="3" width="12" height="10" rx="1.5"/><circle cx="6" cy="7" r="1"/><path d="m2.5 12 3.5-3.5 3 3 2-2 2.5 2.5"/>',
@@ -1569,9 +1703,18 @@ external:'<path d="M6 3H3.5v9.5H13V10M9 3h4v4M13 3 7.5 8.5"/>',menu:'<path d="M2
 settings:'<path d="M2.5 5h6M11.5 5h2M2.5 11h2M7.5 11h6"/><circle cx="10" cy="5" r="1.5"/><circle cx="6" cy="11" r="1.5"/>',logout:'<path d="M6.5 3h-3v10h3M10 5.5 12.5 8 10 10.5M12.5 8h-6"/>',
 sheet:'<rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/><path d="M2.5 6.5h11M2.5 10h11M6.5 6.5v7"/>',archive:'<rect x="2.5" y="3" width="11" height="3" rx="1"/><path d="M3.5 6v6.5h9V6M6.5 9h3"/>',
 video:'<rect x="2" y="3.5" width="9" height="9" rx="1.5"/><path d="m11 7 3-1.8v5.6L11 9z"/>',music:'<path d="M6 12V4l7-1.5V10"/><circle cx="4.5" cy="12" r="1.5"/><circle cx="11.5" cy="10" r="1.5"/>'};
-const expIcon=v=>_IC[v]?'':v;
-const ico=(n,sz=16)=>{if(!_IC[n])return n;const e=document.createElement('span');e.className='ico';
-e.innerHTML=`<svg width="${sz}" height="${sz}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${_IC[n]}</svg>`;return e;};
+const expIcon=v=>_IC[v]?'':(v||'');
+const ico=(n,sz=16)=>{
+  if(!n || n==='null' || n==='undefined' || n==='none') return '';
+  if(!_IC[n]){
+    if(typeof n === 'object' && n && n.nodeType) return n;
+    return String(n);
+  }
+  const e=document.createElement('span');
+  e.className='ico';
+  e.innerHTML=`<svg width="${sz}" height="${sz}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${_IC[n]}</svg>`;
+  return e;
+};
 const uid8 = () => Math.random().toString(36).slice(2, 10);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
@@ -1689,22 +1832,204 @@ function popup(x, y, items) {
   placePop(x, y);
 }
 
-/* Categorized Emoji Sets (No nulls, no empty items) */
-const EMOJI_SETS = ['doc','folder','star','image','video','music','sheet','archive','link','clip','list','check','quote','info','alert','lock','keys','focus','printer','type','search','sun','moon','bolt','book','home','heart','flag','tag','bell','mail','globe','chart','user','calendar','shield','code','settings','download','install'];
+/* Curated Notion-Grade Emojis */
+const EMOJI_CATEGORIES = {
+  'Top Picks': [
+    '🚀','💡','📝','🎯','⚡','🎨','📚','💼','📁','📌','🔥','✨','🌟','💬','🛠️','📊','🔍','🏷️','☕','💻',
+    '🧠','🏆','💎','🔔','🔑','⭐','🎉','🌱','❤️','✅','📅','🔒'
+  ],
+  'Work & Study': [
+    '📄','📑','📊','📈','📉','📋','📌','📍','📎','📂','📁','🗂️','📖','📕','📗','📘','📙','📓','📝','✏️',
+    '🖊️','🖋️','📅','🗓️','⏰','⏱️','⌛','🔒','🔓','🔑','🗝️','💼','📦','🏷️','🪙','💵','💳','💰','✉️','📨',
+    '📩','📬','🗃️','🗄️','🎓','🎒','📐','📏','🧮','🖋️'
+  ],
+  'Tech & Science': [
+    '💻','🖥️','📱','📲','⌨️','🖱️','🖨️','💾','💿','📀','🔌','🔋','⚙️','🔧','🔨','🛠️','🧱','🧪','🧬','🔬',
+    '🔭','📡','💡','🔦','🤖','🛰️','🕹️','🎮','📷','📹','🎥','🎙️','🎧','📻','🔊','🧭','🧲','🚀','🛸','💽'
+  ],
+  'Symbols & Badges': [
+    '✅','❌','⚠️','❓','❗','🎯','🚀','⚡','💎','🔔','🚩','🎌','🛡️','🌐','🏆','🥇','🥈','🥉','🎖️','🌟',
+    '⭐','✨','💥','🛑','🟢','🟡','🔴','🔵','🟣','⚪','⚫','🔶','🔷','🔺','🔻','🔘','🏁','🏳️','🏴','💯',
+    '💢','💫','💭','🗯️','💤','🔗','⚓','⚔️','⚖️','🏷️'
+  ],
+  'Faces & Mood': [
+    '😀','😃','😄','😁','😆','😅','😂','🤣','🙂','😊','😇','😎','🤓','🧐','🤔','🤫','🤭','🤐','🥳','🤗',
+    '🤠','🤩','😴','🤯','🙌','👏','🤝','👍','👎','👊','✌️','🤞','🤟','🤘','👌','🤙','👈','👉','👆','👇',
+    '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔'
+  ],
+  'Nature & Food': [
+    '🌱','🌿','🍀','🌲','🌳','🌴','🌵','🌷','🌸','🌹','🌺','🌻','🌼','☀️','🌙','⭐','⛅','☁️','🌧️','⛈️',
+    '❄️','🌈','🌊','☕','🍵','🧃','🥤','🍎','🍊','🍋','🍇','🍓','🥑','🥦','🍿','🍩','🍰','🍕','🍔','🍟',
+    '🥪','🥗','🍦','🍫','🍉','🍌','🍒','🍑','🥐','🥞'
+  ]
+};
 
-function emojiPop(ev, cb) {
+const EMOJI_KEYWORDS = {
+  '🚀': 'rocket launch fast ship startup space',
+  '💡': 'idea light bulb think solution tip smart',
+  '📝': 'note document paper memo write edit todo',
+  '🎯': 'target goal bullseye focus aim obj',
+  '⚡': 'zap lightning electric quick fast energy power',
+  '🎨': 'art design paint palette creative ui draw',
+  '📚': 'books study learn library reading school research',
+  '💼': 'work business briefcase job career project',
+  '📁': 'folder file directory archive doc category',
+  '📂': 'folder open directory project files',
+  '📌': 'pin pinned notice important reminder',
+  '🔥': 'fire flame hot trending urgent lit',
+  '✨': 'sparkle star magic clean new ai',
+  '🌟': 'star favorite gold highlight glow',
+  '⭐': 'star favorite review rate',
+  '💬': 'chat message talk speech comment discussion',
+  '🛠️': 'tools build maintenance config settings repair',
+  '📊': 'chart analytics graph data stats metrics report',
+  '🔍': 'search find inspect look magnify query',
+  '🏷️': 'tag label category price ticket',
+  '☕': 'coffee break morning cafe drink tea',
+  '💻': 'computer laptop code dev software mac pc',
+  '🧠': 'brain ai smart think intelligence memory neural',
+  '🏆': 'trophy win award prize achievement success',
+  '💎': 'diamond gem value premium luxury',
+  '🔔': 'bell notify alert reminder chime ring',
+  '🔑': 'key password access secret auth lock',
+  '🔒': 'lock secure privacy private safe encrypted',
+  '🔓': 'unlock open public access free',
+  '📅': 'calendar date schedule event meeting month',
+  '🗓️': 'calendar spiral schedule planner day',
+  '⏰': 'clock alarm time deadline hour',
+  '⏱️': 'stopwatch timer speed track measure',
+  '✅': 'check mark done task complete success pass yes',
+  '❌': 'cross error fail cancel close no wrong',
+  '⚠️': 'warning alert caution hazard attention',
+  '❓': 'question help ask faq info',
+  '❗': 'exclamation alert important attention',
+  '🚩': 'flag milestone goal alert priority report',
+  '🛡️': 'shield security protect safe defense guard',
+  '🌐': 'globe web internet network world online site',
+  '⚙️': 'gear settings config options machinery system',
+  '🔧': 'wrench tool fix configure adjust',
+  '🔨': 'hammer build tool create construction',
+  '📦': 'package box shipping deliver release module npm',
+  '🌱': 'plant sprout seed growth begin start nature',
+  '☀️': 'sun day light bright morning weather',
+  '🌙': 'moon night dark mode evening sleep',
+  '❤️': 'heart love like favorite health red',
+  '😀': 'smile happy face laugh smile mood joy',
+  '😎': 'cool sunglasses confident awesome chill',
+  '🤓': 'nerd geek study code glasses clever',
+  '🤔': 'think question ponder consider wonder hmm',
+  '🥳': 'party celebrate congrats birthday woo',
+  '🤝': 'handshake deal partner agreement team meet'
+};
+
+function openEmojiPicker(ev, cb) {
   closePop();
-  pop = h('div', { class: 'pop' });
-  const g = h('div', { class: 'egrid' });
-  EMOJI_SETS.forEach(e => g.append(h('button', { title: e, onclick: () => { closePop(); cb(e); } }, ico(e, 18))));
-  pop.append(
-    h('div', { class: 'pop-cat' }, 'Icons'),
-    g,
-    h('hr'),
-    h('button', { class: 'pi danger', onclick: () => { closePop(); cb(''); } }, ico('x'), ' Remove icon')
+  pop = h('div', { class: 'pop epop' });
+
+  const searchInp = h('input', {
+    class: 'ep-search',
+    placeholder: 'Filter emojis (e.g. rocket, star, code)…',
+    autofocus: true
+  });
+
+  const allEmojis = [...new Set(Object.values(EMOJI_CATEGORIES).flat())];
+  const randBtn = h('button', {
+    class: 'btn sm',
+    title: 'Pick a random emoji',
+    onclick: () => {
+      const r = allEmojis[Math.floor(Math.random() * allEmojis.length)];
+      closePop();
+      cb(r);
+    }
+  }, '🎲 Random');
+
+  const topBar = h('div', { class: 'ep-top' }, searchInp, randBtn);
+
+  const catNames = Object.keys(EMOJI_CATEGORIES);
+  let activeCat = 'Top Picks';
+
+  const tabsWrap = h('div', { class: 'ep-tabs' });
+  const renderTabs = () => {
+    tabsWrap.innerHTML = '';
+    catNames.forEach(c => {
+      const b = h('button', {
+        class: 'ep-tab' + (c === activeCat ? ' on' : ''),
+        onclick: () => {
+          activeCat = c;
+          searchInp.value = '';
+          renderTabs();
+          renderGrid();
+        }
+      }, c);
+      tabsWrap.append(b);
+    });
+  };
+
+  const gridWrap = h('div', { class: 'ep-grid' });
+
+  const renderGrid = () => {
+    gridWrap.innerHTML = '';
+    const q = searchInp.value.trim().toLowerCase();
+    let list = [];
+
+    if (q) {
+      list = allEmojis.filter(e => {
+        if (e.includes(q)) return true;
+        const kw = EMOJI_KEYWORDS[e] || '';
+        return kw.includes(q);
+      });
+      list = [...new Set(list)];
+      if (!list.length) {
+        gridWrap.append(h('div', { class: 'pad muted sm', style: 'grid-column:1/-1;text-align:center;padding:24px 8px' }, 'No matching emojis'));
+        return;
+      }
+    } else {
+      list = EMOJI_CATEGORIES[activeCat] || [];
+    }
+
+    list.forEach(emoji => {
+      const btn = h('button', {
+        class: 'ep-btn',
+        title: emoji,
+        onclick: () => {
+          closePop();
+          cb(emoji);
+        }
+      }, emoji);
+      gridWrap.append(btn);
+    });
+  };
+
+  searchInp.addEventListener('input', () => {
+    if (searchInp.value.trim()) {
+      $$('.ep-tab', tabsWrap).forEach(t => t.classList.remove('on'));
+    }
+    renderGrid();
+  });
+
+  renderTabs();
+  renderGrid();
+
+  const footer = h('div', { class: 'ep-foot' },
+    h('button', {
+      class: 'pi danger sm',
+      style: 'width:100%;justify-content:center',
+      onclick: () => {
+        closePop();
+        cb('');
+      }
+    }, ico('x'), ' Remove icon')
   );
-  placePop(ev.clientX, ev.clientY);
+
+  pop.append(topBar, tabsWrap, gridWrap, h('hr', { style: 'margin:4px 0;border:0;border-top:1px solid var(--bd)' }), footer);
+
+  const x = ev.clientX || (ev.currentTarget && ev.currentTarget.getBoundingClientRect().left) || 120;
+  const y = ev.clientY || (ev.currentTarget && ev.currentTarget.getBoundingClientRect().bottom + 4) || 120;
+  placePop(x, y);
+  setTimeout(() => searchInp.focus(), 50);
 }
+
+const emojiPop = openEmojiPicker;
 
 /* Curated Aesthetic Notion-Style Banners */
 const COVER_PRESETS = [
@@ -2403,6 +2728,19 @@ function renderSidebar() {
 function pageMenu(e, p) {
   const fav = getFavs().includes(p.id);
   popup(e.clientX, e.clientY, [
+    canEditPage(p) ? {
+      icon: 'smile',
+      label: p.icon ? 'Change icon' : 'Add icon',
+      fn: () => openEmojiPicker(e, v => {
+        p.icon = v;
+        if (cur && cur.id === p.id) {
+          cur.icon = v;
+          renderPage();
+        }
+        touch();
+        renderSidebar();
+      })
+    } : null,
     { icon: 'star', label: fav ? 'Remove from favorites' : 'Add to favorites', fn: () => toggleFav(p.id) },
     { icon: 'link', label: 'Copy link', fn: () => copyLink(p.id) },
     canEditPage(p) ? { icon: 'copy', label: 'Duplicate', fn: () => dupPage(p) } : null,
@@ -2499,20 +2837,30 @@ function renderPage() {
 
   // Notion-style top hover action buttons (Add icon, Add cover)
   const topActions = h('div', { class: 'page-top-actions' });
-  if (edit) {
+  const drawTopActions = () => {
+    topActions.innerHTML = '';
+    if (!edit) return;
     if (!getIcon(cur.icon)) {
       topActions.append(h('button', {
         class: 'page-top-btn',
-        onclick: e => emojiPop(e, v => { cur.icon = v; touch(); drawIcon(); renderTop(); renderSidebarSoon(); })
+        onclick: e => openEmojiPicker(e, v => {
+          cur.icon = v;
+          touch();
+          drawIcon();
+          drawTopActions();
+          renderTop();
+          renderSidebarSoon();
+        })
       }, 'Add icon'));
     }
-    if (!coverVal) {
+    if (!getIcon(cur.cover)) {
       topActions.append(h('button', {
         class: 'page-top-btn',
         onclick: pickCover
       }, 'Add cover'));
     }
-  }
+  };
+  drawTopActions();
 
   // Icon
   const iconWrap = h('div', { class: 'picon-wrap' + (coverVal ? ' has-cover' : '') });
@@ -2520,11 +2868,20 @@ function renderPage() {
     iconWrap.innerHTML = '';
     const ic = getIcon(cur.icon);
     if (ic) {
+      const isSvgIcon = !!_IC[ic];
+      const iconNode = isSvgIcon ? ico(ic, 54) : ic;
       iconWrap.append(h('div', {
-        class: 'picon',
-        title: edit ? 'Click to change icon' : null,
-        onclick: edit ? e => emojiPop(e, v => { cur.icon = v; touch(); drawIcon(); renderTop(); renderSidebarSoon(); }) : null
-      }, ic));
+        class: 'picon' + (isSvgIcon ? ' is-svg' : ''),
+        title: edit ? 'Click to change emoji' : null,
+        onclick: edit ? e => openEmojiPicker(e, v => {
+          cur.icon = v;
+          touch();
+          drawIcon();
+          drawTopActions();
+          renderTop();
+          renderSidebarSoon();
+        }) : null
+      }, iconNode));
     }
   };
   drawIcon();
@@ -2599,34 +2956,34 @@ function renderTop() {
   chain.forEach((c, i) => {
     const last = i === chain.length - 1;
     if (i) cr.push(h('span', { class: 'muted sm' }, '/'));
-    const ic = '';
+    const pageIcon = getIcon(c.icon);
     cr.push(h(last ? 'span' : 'a', { class: 'cr', href: last ? null : '#/' + c.id },
-      ico(getIcon(c.icon, 'doc')), ' ' + (c.title || 'Untitled')
+      pageIcon ? ico(pageIcon, 14) : ico('doc', 14), ' ' + (c.title || 'Untitled')
     ));
   });
 
   const r = role();
   const fav = me && getFavs().includes(cur.id);
   const s = $('#side');
-  const isCollapsed = s && (s.classList.contains('collapsed') || innerWidth <= 800);
+  const isCollapsed = Boolean(s && (s.classList.contains('collapsed') || innerWidth <= 800));
 
   const leftElements = [
     h('button', { id: 'side-toggle', title: isCollapsed ? 'Open sidebar (Ctrl+\\)' : 'Close sidebar (Ctrl+\\)', onclick: toggleSidebar }, ico(isCollapsed ? 'menu' : 'left')),
     guest ? h('div', { style: 'margin-right:6px' }, h('a', { href: '#', onclick: e => { e.preventDefault(); location.hash = ''; showAuth(); } }, createLogoSvg(20))) : null,
     ...cr
-  ];
+  ].filter(Boolean);
 
   const rightElements = [
     h('span', { class: 'sp' }),
     h('span', { class: 'status-text', id: 'wc' }, ''),
     h('span', { class: 'status-text', id: 'st' }, ''),
-    r === 'viewer' && me ? h('span', { class: 'badge' }, 'View only') : null,
-    cur.locked && r !== 'viewer' ? h('span', { class: 'badge' }, ico('lock', 12), ' Locked') : null,
+    (r === 'viewer' && me) ? h('span', { class: 'badge' }, 'View only') : null,
+    (cur.locked && r !== 'viewer') ? h('span', { class: 'badge' }, ico('lock', 12), ' Locked') : null,
     guest ? h('a', { class: 'btn sm pri', href: '#', onclick: e => { e.preventDefault(); location.hash = ''; showAuth(); } }, 'Sign In') : null,
     me ? h('button', {
       title: fav ? 'Starred' : 'Add to favorites',
       onclick: () => toggleFav(cur.id)
-    }, (() => { const e = ico('star'); if (fav) e.firstChild.setAttribute('fill', 'currentColor'); return e; })()) : null,
+    }, (() => { const e = ico('star'); if (fav && e && e.firstChild) e.firstChild.setAttribute('fill', 'currentColor'); return e; })()) : null,
     me ? h('button', { class: 'btn sm', onclick: openShare }, 'Share') : null,
     h('button', {
       title: 'Options',
@@ -2635,7 +2992,7 @@ function renderTop() {
         pageMenuTop(b.left - 120, b.bottom + 4);
       }
     }, '⋯')
-  ];
+  ].filter(Boolean);
 
   appendKids(top, leftElements, rightElements);
   updateWc();
@@ -2652,6 +3009,7 @@ function pageMenuTop(x, y) {
     role() !== 'viewer' ? { icon: 'lock', label: cur.locked ? 'Unlock page' : 'Lock page', fn: toggleLock } : null,
     { icon: 'settings', label: 'Settings', fn: () => openSettings() },
     '-',
+    me && canEdit() ? { icon: 'smile', label: cur.icon ? 'Change icon' : 'Add icon', fn: e => openEmojiPicker(e || { clientX: x, clientY: y }, v => { cur.icon = v; touch(); renderPage(); }) } : null,
     me && canEdit() ? { icon: 'image', label: cur.cover ? 'Change cover' : 'Add cover', fn: pickCover } : null,
     me ? { icon: 'star', label: fav ? 'Remove from favorites' : 'Add to favorites', fn: () => toggleFav(cur.id) } : null,
     { icon: 'link', label: 'Copy link', fn: () => copyLink(cur.id) },
@@ -4411,9 +4769,6 @@ Object.assign(_IC, {
   user: '<circle cx="8" cy="5.5" r="2.5"/><path d="M3 13.5c0-3 2.2-4.5 5-4.5s5 1.5 5 4.5"/>', calendar: '<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3"/>',
   shield: '<path d="M8 2 3 4v4c0 3 2 5 5 6 3-1 5-3 5-6V4z"/>'
 });
-// Any stored emoji icon is shown as the fallback icon instead.
-const _gi = getIcon;
-getIcon = (v, f = '') => { const s = _gi(v, f); return /\p{Extended_Pictographic}/u.test(s) ? f : s; };
 
 let dp = null;
 const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone;
