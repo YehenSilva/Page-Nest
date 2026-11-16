@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function owner(d)  { return signedIn() && d.ownerId == request.auth.uid; }
+    function editor(d) { return owner(d) || (signedIn() && request.auth.uid in d.get('editorIds', [])); }
+    function member(d) { return editor(d) || (signedIn() && (request.auth.uid in d.get('viewerIds', []) || request.auth.uid in d.get('memberIds', []))); }
+    function page(id)  { return get(/databases/$(database)/documents/pages/$(id)).data; }
+
+    function validPage(d) { return d.title is string && d.title.size() <= 300 && d.blocks is list && d.blocks.size() <= 3000; }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      // Users may only write their own profile, and the stored email must be their real account email.
+      allow write: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['email', 'name', 'photo'])
+        && request.resource.data.email == request.auth.token.get('email', '').lower();
+    }
+
+    match /pages/{id} {
+      allow read: if resource.data.get('public', false) == true || member(resource.data);
+      allow create: if signedIn()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.lastEditor == request.auth.uid
+        && validPage(request.resource.data);
+      // Owners change anything; editors cannot change ownership or sharing, and cannot edit locked pages.
+      allow update: if validPage(request.resource.data) && (owner(resource.data)
+        || (editor(resource.data)
+            && !resource.data.get('locked', false)
+            && request.resource.data.ownerId == resource.data.ownerId
+            && request.resource.data.get('editorIds', []) == resource.data.get('editorIds', [])
+            && request.resource.data.get('viewerIds', []) == resource.data.get('viewerIds', [])
+            && request.resource.data.get('public', false) == resource.data.get('public', false)));
+      allow delete: if owner(resource.data);
+
+      // Version history: append-only audit trail, authored by the signed-in editor.
+      match /versions/{vid} {
+        allow read: if member(page(id));
+        allow create: if editor(page(id)) && request.resource.data.uid == request.auth.uid
+          && request.resource.data.keys().hasOnly(['uid','name','email','t','title','sum','n','where','dev','snap'])
+          && request.resource.data.snap.size() <= 900000;
+        allow update: if false;
+        allow delete: if owner(page(id));
+      }
+    }
+  }
+}

@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com https://apis.google.com blob:; worker-src 'self' blob: https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' data: https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' blob: data: https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.gstatic.com https://cdnjs.cloudflare.com; frame-src https: blob: data:; object-src blob: data:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://cdnjs.cloudflare.com https://apis.google.com blob:; worker-src 'self' blob: https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' data: https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' blob: data: https://www.google.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://www.gstatic.com https://cdnjs.cloudflare.com; frame-src https: blob: data:; object-src blob: data:; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <link rel="manifest" href="manifest.webmanifest">
+<script src="firebase-config.js"></script>
 <meta name="theme-color" content="#191919">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1480,15 +1481,8 @@ if (!IS_DEMO) {
 }
 
 /* ============ FIREBASE CONFIGURATION ============ */
-const firebaseConfig = {
-  apiKey: "AIzaSyAr4w1XOIYbc1i7pjOyX9wqMBsnX4SkbsU",
-  authDomain: "modern-binder-512403-b0.firebaseapp.com",
-  projectId: "modern-binder-512403-b0",
-  storageBucket: "modern-binder-512403-b0.firebasestorage.app",
-  messagingSenderId: "803686905782",
-  appId: "1:803686905782:web:e3f1275872a89193653317",
-  measurementId: "G-N596BJ8WXL"
-};
+const firebaseConfig = window.FIREBASE_CONFIG || { apiKey: 'YOUR_API_KEY', authDomain: 'YOUR_PROJECT.firebaseapp.com', projectId: 'YOUR_PROJECT', storageBucket: 'YOUR_PROJECT.firebasestorage.app', messagingSenderId: '', appId: '' };
+if (firebaseConfig.appCheckKey) { try { window.__AC = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js'); } catch (e) { console.warn('App Check unavailable', e); } }
 /* ================================================= */
 
 window.__pn = 1;
@@ -1962,6 +1956,7 @@ function boot() {
   }
   if (!CONFIGURED) { $('#setup').hidden = false; return; }
   const app = initializeApp(firebaseConfig);
+  if (window.__AC && firebaseConfig.appCheckKey) window.__AC.initializeAppCheck(app, { provider: new window.__AC.ReCaptchaV3Provider(firebaseConfig.appCheckKey), isTokenAutoRefreshEnabled: true });
   auth = getAuth(app);
   db = getFirestore(app);
   onAuthStateChanged(auth, async u => {
